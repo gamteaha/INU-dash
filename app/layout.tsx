@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className="h-full scroll-smooth antialiased">
-      <body className={`${notoFont.variable} font-sans bg-[#efefef] text-[#202020] min-h-screen flex`}>
+      <body className={`${notoFont.variable} font-sans bg-[#EBF1FA] text-blue-900 min-h-screen flex`}>
         <DashboardFilterProvider>
           <div className="flex w-full min-h-screen">
             <Suspense fallback={<div className="w-[220px] min-w-[220px] bg-white border-r border-[#E5E7EB]" />}>

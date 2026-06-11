@@ -47,78 +47,76 @@ function SidebarContent({
   }
 
   return (
-    <div className="flex flex-col h-full bg-[var(--color-paper)]">
+    <div className="flex flex-col h-full bg-white/70 backdrop-blur-xl border-r border-white/60 shadow-[5px_0_15px_rgba(0,75,155,0.05)]">
       {/* Header Logo */}
-      <div className="h-16 flex items-center px-4 border-b border-[var(--color-chalk)] bg-[var(--color-paper)] shrink-0 gap-2">
-        <span className="text-xl">🎓</span>
+      <div className="h-20 flex items-center px-6 border-b border-blue-900/10 shrink-0 gap-3">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 shadow-[2px_2px_10px_rgba(0,75,155,0.2)] flex items-center justify-center">
+          <span className="text-xl text-white">🎓</span>
+        </div>
         {!collapsed && (
           <div className="flex flex-col min-w-0">
-            <span className="font-semibold text-[11px] text-[var(--color-slate)] uppercase tracking-[0.08em] truncate">
+            <span className="font-extrabold text-[14px] text-blue-900 uppercase tracking-widest truncate">
               INCHEON NATL UNIV
             </span>
-            <span className="text-[11px] font-normal text-[var(--color-slate)]">
-              2026-1 Course Dashboard
+            <span className="text-[12px] font-medium text-blue-600/80">
+              대시보드 2026-1
             </span>
           </div>
         )}
         {onClose && (
           <button
             onClick={onClose}
-            className="ml-auto p-1.5 rounded-full text-[var(--color-slate)] hover:bg-[var(--color-fog)] transition-colors lg:hidden"
+            className="ml-auto p-2 rounded-full text-blue-900 hover:bg-blue-100 transition-colors lg:hidden shadow-sm"
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </button>
         )}
       </div>
 
       {/* Menu */}
-      <div className="flex-1 py-4 px-2 space-y-4 overflow-y-auto">
+      <div className="flex-1 py-6 px-4 space-y-6 overflow-y-auto custom-scrollbar">
         {/* All Dashboard */}
-        <div className="px-2">
+        <div>
           <button
             onClick={handleHomeClick}
             title="전체 대시보드"
-            className={`flex items-center w-full px-3 py-2 text-[13px] font-medium rounded-[6px] transition-all duration-150 gap-2 ${
+            className={`flex items-center w-full px-4 py-3 text-[14px] font-bold rounded-full transition-all duration-200 gap-3 ${
               isAllDashboardActive
-                ? "bg-[var(--color-carbon)] text-white"
-                : "text-[var(--color-carbon)] hover:bg-[var(--color-fog)]"
-            } ${collapsed ? "justify-center" : ""}`}
+                ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_4px_10px_rgba(0,75,155,0.3)]"
+                : "bg-white/50 text-blue-900 border border-white/60 shadow-[2px_2px_8px_rgba(0,0,0,0.03)] hover:shadow-[4px_4px_12px_rgba(0,0,0,0.06)] hover:bg-white/80"
+            } ${collapsed ? "justify-center px-0" : ""}`}
           >
-            <LayoutDashboard className={`h-4 w-4 shrink-0 ${isAllDashboardActive ? "text-white" : "text-[var(--color-carbon)]"}`} />
+            <LayoutDashboard className={`h-5 w-5 shrink-0 ${isAllDashboardActive ? "text-white" : "text-blue-600"}`} />
             {!collapsed && <span>전체 대시보드</span>}
           </button>
         </div>
 
-        {/* College Accordion */}
+        {/* College List (Always 100% expanded) */}
         {!collapsed && (
-          <div className="space-y-1">
-            <span className="block px-4 pt-4 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--color-slate)]">
-              대학 / 학부
+          <div className="space-y-3">
+            <span className="block px-4 pt-2 pb-1 text-[12px] font-extrabold uppercase tracking-widest text-blue-400">
+              단과대학 / 학부
             </span>
-            <div className="space-y-1.5 mt-2">
+            <div className="space-y-4 mt-2">
               {COLLEGE_HIERARCHY.map((item) => {
                 const isCollegeSelected = selectedCollege === item.college && !selectedDepartment
 
                 return (
-                  <div key={item.college} className="space-y-1">
+                  <div key={item.college} className="space-y-2">
                     {/* College Group Header */}
-                    <div
-                      className={`flex items-center justify-between w-full py-2 pb-1 border-l-2 cursor-pointer transition-all duration-150 ${
+                    <button
+                      className={`flex items-center w-full px-4 py-2 text-[13px] font-extrabold rounded-full transition-all duration-200 ${
                         isCollegeSelected
-                          ? "bg-[var(--color-fog)] border-[var(--color-signal-orange)] text-[var(--color-carbon)] font-semibold"
-                          : "border-transparent text-[var(--color-carbon)] hover:bg-[var(--color-fog)] hover:border-[var(--color-signal-orange)]"
+                          ? "bg-blue-100/80 text-blue-800 border border-blue-200 shadow-inner"
+                          : "bg-transparent text-blue-900 hover:bg-blue-50/50"
                       }`}
                       onClick={() => handleCollegeClick(item.college)}
                     >
-                      <button
-                        className="flex-1 text-[12px] font-semibold text-left px-4"
-                      >
-                        {item.college}
-                      </button>
-                    </div>
+                      {item.college}
+                    </button>
 
-                    {/* Always Open/Expanded */}
-                    <div className="space-y-0.5 mt-0.5">
+                    {/* Departments (Always Open) */}
+                    <div className="space-y-1.5 px-3">
                       {item.departments.map((dept) => {
                         const isDeptSelected =
                           selectedCollege === item.college && selectedDepartment === dept
@@ -126,13 +124,13 @@ function SidebarContent({
                           <button
                             key={dept}
                             onClick={() => handleDeptClick(item.college, dept)}
-                            className={`block w-full text-[12px] text-left transition-all duration-150 pl-7 pr-4 py-1 border-l-2 ${
+                            className={`block w-full text-[12px] text-left transition-all duration-200 px-4 py-2 rounded-full ${
                               isDeptSelected
-                                ? "bg-[var(--color-fog)] text-[var(--color-carbon)] font-semibold border-[var(--color-signal-orange)]"
-                                : "border-transparent text-[var(--color-graphite)] hover:bg-[var(--color-fog)] hover:border-[var(--color-signal-orange)] hover:text-[var(--color-carbon)]"
+                                ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-[0_3px_8px_rgba(0,75,155,0.25)] font-bold"
+                                : "bg-white/40 text-blue-700/80 border border-white/50 shadow-[1px_1px_4px_rgba(0,0,0,0.02)] hover:bg-white hover:text-blue-900 hover:shadow-[2px_2px_8px_rgba(0,0,0,0.05)] font-medium"
                             }`}
                           >
-                            {dept}
+                            <span className="truncate block">{dept}</span>
                           </button>
                         )
                       })}
@@ -146,22 +144,22 @@ function SidebarContent({
 
         {/* Collapsed: icon-only college list */}
         {collapsed && (
-          <div className="space-y-1.5 mt-2 px-1">
+          <div className="space-y-2 mt-4 px-1">
             {COLLEGE_HIERARCHY.map((item) => {
               const isCollegeSelected = selectedCollege === item.college
-              const abbr = item.college.slice(0, 2)
+
               return (
                 <button
                   key={item.college}
                   onClick={() => handleCollegeClick(item.college)}
                   title={item.college}
-                  className={`flex items-center justify-center w-full py-2 rounded-[6px] text-[10px] font-semibold transition-all duration-150 ${
+                  className={`flex items-center justify-center w-full py-3 rounded-full transition-all duration-200 ${
                     isCollegeSelected
-                      ? "bg-[var(--color-carbon)] text-white"
-                      : "text-[var(--color-slate)] hover:bg-[var(--color-fog)]"
+                      ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_4px_10px_rgba(0,75,155,0.3)]"
+                      : "bg-white/50 text-blue-600 border border-white/60 shadow-[2px_2px_8px_rgba(0,0,0,0.03)] hover:shadow-[4px_4px_12px_rgba(0,0,0,0.06)] hover:bg-white/80"
                   }`}
                 >
-                  {abbr}
+                  <GraduationCap className="h-5 w-5" />
                 </button>
               )
             })}
@@ -172,50 +170,37 @@ function SidebarContent({
   )
 }
 
-export default function Sidebar({ className = "" }: SidebarProps) {
-  const [mobileOpen, setMobileOpen] = useState(false)
+export default function Sidebar({ className }: SidebarProps) {
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <>
-      {/* ── Mobile Top Bar (< md) ─────────────────────────── */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-[var(--color-paper)] border-b border-[var(--color-chalk)] flex items-center px-4 gap-3 shadow-none">
+      {/* Mobile Menu Button */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white/70 backdrop-blur-xl border-b border-blue-900/10 z-40 flex items-center px-4 shadow-sm">
         <button
-          onClick={() => setMobileOpen(true)}
-          className="p-2 rounded-full text-[var(--color-slate)] hover:bg-[var(--color-fog)] transition-colors"
+          onClick={() => setIsOpen(true)}
+          className="p-2 -ml-2 rounded-full text-blue-900 hover:bg-blue-100 transition-colors shadow-sm"
         >
-          <Menu className="h-5 w-5" />
+          <Menu className="h-6 w-6" />
         </button>
-        <span className="text-xl">🎓</span>
-        <span className="font-semibold text-[11px] text-[var(--color-carbon)] uppercase tracking-wider">
-          INU Course Dashboard
-        </span>
+        <span className="ml-3 font-extrabold text-[15px] text-blue-900 tracking-wider">INU 대시보드</span>
       </div>
 
-      {/* ── Mobile Overlay Drawer (< md) ──────────────────── */}
-      {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            onClick={() => setMobileOpen(false)}
-          />
-          {/* Drawer */}
-          <aside className="relative w-[220px] bg-[var(--color-paper)] h-full flex flex-col shadow-none overflow-y-auto">
-            <SidebarContent onClose={() => setMobileOpen(false)} />
-          </aside>
-        </div>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-blue-900/20 backdrop-blur-sm z-40 transition-opacity"
+          onClick={() => setIsOpen(false)}
+        />
       )}
 
-      {/* ── Tablet Collapsed Sidebar (md ~ lg) ────────────── */}
-      <aside className="hidden md:flex lg:hidden w-[64px] min-w-[64px] bg-[var(--color-paper)] border-r border-[var(--color-chalk)] flex-col h-screen sticky top-0 overflow-y-auto select-none shadow-none">
-        <SidebarContent collapsed />
-      </aside>
-
-      {/* ── Desktop Full Sidebar (≥ lg) ───────────────────── */}
+      {/* Sidebar Container */}
       <aside
-        className={`hidden lg:flex w-[220px] min-w-[220px] bg-[var(--color-paper)] border-r border-[var(--color-chalk)] flex-col h-screen sticky top-0 overflow-y-auto select-none shadow-none ${className}`}
+        className={`fixed inset-y-0 left-0 z-50 w-[260px] transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } ${className || ""}`}
       >
-        <SidebarContent />
+        <SidebarContent onClose={() => setIsOpen(false)} />
       </aside>
     </>
   )

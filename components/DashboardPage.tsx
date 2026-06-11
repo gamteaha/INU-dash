@@ -12,6 +12,8 @@ import CourseDetailTable from "@/components/dashboard/CourseDetailTable"
 import CampusMap from "@/components/CampusMap"
 import PageHeader from "@/components/PageHeader"
 import AiAnalysisModal from "@/components/AiAnalysisModal"
+import Breadcrumb from "@/components/dashboard/Breadcrumb"
+import MascotBanner from "@/components/dashboard/MascotBanner"
 import { Loader2, X } from "lucide-react"
 
 // ── Skeleton block ─────────────────────────────────────────────
@@ -309,6 +311,9 @@ export default function DashboardPage() {
         <DashboardSkeleton />
       ) : (
         <>
+          <Breadcrumb />
+          <MascotBanner />
+
           {/* KPI Cards */}
           <KpiCards
             totalCourses={totalCourses}

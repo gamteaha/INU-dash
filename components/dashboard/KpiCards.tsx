@@ -10,20 +10,15 @@ interface KpiCardsProps {
   englishLecturesCount: number
 }
 
-// ── Individual animated card ───────────────────────────────────
 interface KpiCardProps {
   id: string
   label: string
-  /** Raw numeric value (integer or float) */
   rawValue: number
   unit: string
   delta: string
   icon: React.ElementType
-  /** Stagger delay in ms */
   delay: number
-  /** Decimal places for float values */
   decimals?: number
-  /** Format fn applied to the animated number before display */
   format?: (n: number) => string
 }
 
@@ -44,44 +39,44 @@ function KpiCard({
   return (
     <div
       id={id}
-      className="bg-[var(--color-paper)] rounded-[var(--radius-card)] p-6 flex flex-col justify-between shadow-[var(--shadow-card)] hover:-translate-y-0.5 transition-transform duration-200 ease-in-out border-none"
+      className="bg-white/60 backdrop-blur-md rounded-2xl p-6 flex flex-col justify-between shadow-[5px_5px_15px_rgba(0,75,155,0.08)] border border-white/60 hover:-translate-y-1 hover:shadow-[8px_8px_20px_rgba(0,75,155,0.12)] transition-all duration-300 ease-in-out relative overflow-hidden group"
       style={{
         animation: `cardEnter 400ms ease-out ${delay}ms both`,
       }}
     >
+      {/* Decorative gradient orb */}
+      <div className="absolute -right-6 -top-6 w-24 h-24 bg-gradient-to-br from-blue-300/30 to-indigo-400/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
+
       {/* Top Row: Label + Icon */}
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-[13px] font-medium text-[var(--color-slate)]">
+      <div className="flex items-center justify-between mb-4 relative z-10">
+        <span className="text-[14px] font-bold text-blue-900/60 tracking-wide">
           {label}
         </span>
-        <Icon className="h-5 w-5 text-[var(--color-signal-orange)] shrink-0" strokeWidth={1.5} />
+        <div className="p-2.5 bg-blue-50/80 rounded-xl shadow-[inset_1px_1px_3px_rgba(255,255,255,0.8),2px_2px_5px_rgba(0,75,155,0.1)] group-hover:bg-blue-100/80 transition-colors">
+          <Icon className="h-5 w-5 text-blue-600 shrink-0 drop-shadow-sm" strokeWidth={2} />
+        </div>
       </div>
 
       {/* Center Row: Animated Value + Unit */}
-      <div className="flex items-baseline gap-1 mb-2">
-        <span
-          className="text-[40px] font-normal tracking-[-0.8px] text-[var(--color-carbon)] leading-none tabular-nums"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
+      <div className="flex items-baseline gap-1.5 relative z-10">
+        <span className="text-[32px] sm:text-[36px] font-extrabold tracking-tight text-blue-900 drop-shadow-sm">
           {display}
         </span>
-        <span
-          className="text-[20px] font-normal text-[var(--color-carbon)]"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
+        <span className="text-[14px] font-semibold text-blue-900/60">
           {unit}
         </span>
       </div>
 
-      {/* Bottom Row: Delta */}
-      <div className="text-[12px] font-normal text-[var(--color-slate)]">
-        {delta}
+      {/* Bottom Row: Context/Delta text */}
+      <div className="mt-3 relative z-10">
+        <span className="text-[12px] font-medium text-blue-600/80 bg-blue-50/50 px-2 py-1 rounded-md border border-blue-100/50">
+          {delta}
+        </span>
       </div>
     </div>
   )
 }
 
-// ── Main component ─────────────────────────────────────────────
 export default function KpiCards({
   totalCourses,
   totalCapacity,
@@ -93,58 +88,46 @@ export default function KpiCards({
   const englishRate =
     totalCourses > 0 ? (englishLecturesCount / totalCourses) * 100 : 0
 
-  const cards: KpiCardProps[] = [
-    {
-      id: "total-courses",
-      label: "총 강좌 수",
-      rawValue: totalCourses,
-      unit: "개",
-      icon: BookOpen,
-      delta: "전 학기 대비 +1.2%",
-      delay: 0,
-      decimals: 0,
-      format: (n) => Math.round(n).toLocaleString(),
-    },
-    {
-      id: "total-enrolled",
-      label: "총 수강인원",
-      rawValue: totalEnrolled,
-      unit: "명",
-      icon: Users,
-      delta: "전 학기 대비 +3.4%",
-      delay: 80,
-      decimals: 0,
-      format: (n) => Math.round(n).toLocaleString(),
-    },
-    {
-      id: "avg-enroll-rate",
-      label: "평균 수강율",
-      rawValue: avgEnrollRate,
-      unit: "%",
-      icon: BarChart2,
-      delta: "전 학기 대비 +0.8%p",
-      delay: 160,
-      decimals: 1,
-      format: (n) => n.toFixed(1),
-    },
-    {
-      id: "english-rate",
-      label: "원어강의의 비율",
-      rawValue: englishRate,
-      unit: "%",
-      icon: Globe,
-      delta: "전 학기 대비 -0.2%p",
-      delay: 240,
-      decimals: 1,
-      format: (n) => n.toFixed(1),
-    },
-  ]
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4">
-      {cards.map((card) => (
-        <KpiCard key={card.id} {...card} />
-      ))}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+      <KpiCard
+        id="kpi-total-courses"
+        label="총 개설 강좌"
+        rawValue={totalCourses}
+        unit="개"
+        delta="전체 단과대학 기준"
+        icon={BookOpen}
+        delay={0}
+      />
+      <KpiCard
+        id="kpi-avg-enroll"
+        label="평균 수강률"
+        rawValue={avgEnrollRate}
+        unit="%"
+        delta="전체 정원 대비 수강인원"
+        icon={BarChart2}
+        delay={100}
+        decimals={1}
+      />
+      <KpiCard
+        id="kpi-total-enrolled"
+        label="총 수강 인원"
+        rawValue={totalEnrolled}
+        unit="명"
+        delta="수강신청 인원 합계"
+        icon={Users}
+        delay={200}
+      />
+      <KpiCard
+        id="kpi-english"
+        label="원어 강의 비율"
+        rawValue={englishRate}
+        unit="%"
+        delta={`전체 중 ${englishLecturesCount.toLocaleString()}개`}
+        icon={Globe}
+        delay={300}
+        decimals={1}
+      />
     </div>
   )
 }

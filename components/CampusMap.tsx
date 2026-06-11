@@ -230,11 +230,14 @@ export default function CampusMap() {
   }, [mapInstance, buildingStats, selectedBuilding, maxCourseCount, setSelectedCollege])
 
   return (
-    <div className="bg-[var(--color-paper)] rounded-lg p-6 min-w-0 shadow-[var(--shadow-card)] border-none">
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="text-[14px] font-semibold text-[var(--color-carbon)] flex items-center gap-2">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-signal-orange)]" />
-          캠퍼스 강좌 분포 지도
+    <div className="bg-white/60 backdrop-blur-md rounded-3xl p-6 mb-8 shadow-[5px_5px_20px_rgba(0,75,155,0.08)] flex flex-col gap-4 border border-white/60 min-h-[500px] overflow-hidden relative group">
+      {/* Decorative gradient orb */}
+      <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700 pointer-events-none" />
+
+      <div className="flex items-center justify-between relative z-10">
+        <h3 className="text-[16px] font-extrabold text-blue-900 flex items-center gap-2">
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
+          캠퍼스 강좌 분포
         </h3>
         <span
           className="text-[11px] text-[var(--color-slate)]"
@@ -244,15 +247,14 @@ export default function CampusMap() {
         </span>
       </div>
 
-      <div className="relative w-full h-[500px] rounded-lg overflow-hidden bg-[var(--color-fog)] border border-[var(--color-chalk)]">
-        <div ref={mapRef} style={{ width: "100%", height: "100%" }} />
-
+      {/* Map Container */}
+      <div className="relative w-full flex-1 rounded-2xl overflow-hidden border border-blue-900/10 shadow-inner min-h-[400px] z-10">
+        <div ref={mapRef} className="w-full h-full" />
         {!isLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#f5f5f5]">
-            <p className="text-[14px] text-[var(--color-slate)] animate-pulse">지도 로딩 중...</p>
+          <div className="absolute inset-0 bg-blue-50/80 backdrop-blur-sm flex items-center justify-center">
+            <span className="text-[14px] text-blue-800 font-bold animate-pulse">지도 불러오는 중...</span>
           </div>
         )}
-
         {isLoaded && (
           <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
             <button

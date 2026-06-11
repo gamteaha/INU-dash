@@ -31,7 +31,7 @@ function highlightText(text: string, query: string): string {
   const regex = new RegExp(`(${escaped})`, "gi")
   return text.replace(
     regex,
-    '<mark style="background:rgba(255,104,44,0.15);color:#ff682c;border-radius:2px;padding:0 2px;">$1</mark>'
+    '<mark style="background:rgba(59,130,246,0.15);color:#2563EB;border-radius:2px;padding:0 2px;font-weight:700;">$1</mark>'
   )
 }
 
@@ -111,215 +111,161 @@ export default function CourseDetailTable({ courses }: CourseDetailTableProps) {
   const isSearching = debouncedQuery.trim().length > 0
 
   return (
-    <div className="bg-[var(--color-paper)] rounded-lg overflow-hidden shadow-[var(--shadow-card)] border-none">
+    <div className="bg-white/60 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-[5px_5px_20px_rgba(0,75,155,0.08)] border border-white/60 flex flex-col gap-6 w-full min-w-0 overflow-hidden relative">
+      {/* Decorative gradient orb */}
+      <div className="absolute right-0 top-0 w-64 h-64 bg-blue-300/10 rounded-full blur-3xl pointer-events-none" />
+
       {/* ── Header ──────────────────────────────────────────── */}
-      <div className="p-6 border-b border-[var(--color-chalk)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
         <div className="flex flex-col gap-1">
-          <h3 className="text-sm font-semibold text-[var(--color-carbon)] flex items-center gap-1.5">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-signal-orange)]" />
+          <h3 className="text-[16px] font-extrabold text-blue-900 flex items-center gap-2 px-1">
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
             상세 강좌 정보
+            <span className="text-[12px] font-bold text-blue-400 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
+              {totalItems.toLocaleString()}건
+            </span>
           </h3>
-          <span className="text-xs font-medium text-[var(--color-slate)]">
+          <span className="text-[12px] font-medium text-blue-900/50 pl-1">
             총 {totalItems.toLocaleString()}개 중{" "}
             {totalItems > 0 ? startIndex + 1 : 0}–{endIndex}번째 표시
           </span>
         </div>
 
         {/* Search Input */}
-        <div className="relative min-w-[260px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--color-slate)] pointer-events-none" />
+        <div className="relative w-full sm:w-72">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+            <Search className="h-4 w-4 text-blue-400" />
+          </div>
           <input
             id="course-search"
             type="text"
             value={inputValue}
             onChange={handleInputChange}
             placeholder="강좌명, 교수명, 학과명 검색..."
-            className="w-full border border-[var(--color-chalk)] rounded-lg pl-8 pr-3 py-2 text-[13px] focus:outline-none focus:border-[var(--color-signal-orange)] bg-[var(--color-paper)] text-[var(--color-carbon)] transition-colors placeholder:text-[var(--color-slate)]"
+            className="w-full pl-10 pr-4 py-2.5 bg-white/80 border border-blue-100 rounded-full text-[13px] text-blue-900 placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all shadow-[inset_1px_1px_4px_rgba(0,0,0,0.02)]"
             style={{ fontFamily: "var(--font-body)" }}
           />
         </div>
       </div>
 
-      {/* ── Search result badge ──────────────────────────────── */}
-      {isSearching && (
-        <div className="px-6 py-2.5 border-b border-[var(--color-chalk)] bg-[var(--color-fog)]">
-          <span
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[20px] bg-[var(--color-fog)] border border-[var(--color-chalk)] text-[12px] text-[var(--color-signal-orange)]"
-            style={{ fontFamily: "var(--font-body)" }}
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-signal-orange)] inline-block" />
-            검색 결과: {totalItems.toLocaleString()}개 강좌
-          </span>
-        </div>
-      )}
-
-      {/* ── Table ───────────────────────────────────────────── */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[900px]">
-          <thead>
-            <tr className="bg-[var(--color-fog)] border-b border-[var(--color-chalk)]">
-              <th className="px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-slate)]">
-                강좌명
-              </th>
-              <th className="px-4 py-3 text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-slate)] w-32">
-                대학
-              </th>
-              <th className="px-4 py-3 text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-slate)] w-36">
-                학과
-              </th>
-              <th className="px-4 py-3 text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-slate)] w-24">
-                이수구분
-              </th>
-              <th className="px-4 py-3 text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-slate)] w-28">
-                수업방법
-              </th>
-              <th className="px-4 py-3 text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-slate)] w-20 text-center">
-                학점
-              </th>
-              <th className="px-4 py-3 text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-slate)] w-28 text-center">
-                수강인원
-              </th>
-              <th className="px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-slate)] w-24 text-right">
-                수강률
-              </th>
-            </tr>
-          </thead>
-
-          <tbody className="divide-y divide-[var(--color-chalk)] bg-[var(--color-paper)]">
-            {currentData.length > 0 ? (
-              currentData.map((course) => {
-                const capacity = Number(course.정원) || 0
-                const enrolled = Number(course.수강) || 0
-                const rate = capacity > 0 ? (enrolled / capacity) * 100 : 0
-                const q = debouncedQuery  // raw (non-lowercased) for display
-
+      {/* ── Table Container ─────────────────────────────────── */}
+      <div className="overflow-x-auto w-full custom-scrollbar rounded-xl border border-blue-900/10 shadow-inner bg-white/40 relative z-10">
+        {totalItems === 0 ? (
+          <div className="py-16 text-center text-blue-400 text-[13px] font-medium">
+            {isSearching ? "검색 결과가 없습니다." : "해당하는 강좌가 없습니다."}
+          </div>
+        ) : (
+          <table className="w-full text-left border-collapse whitespace-nowrap min-w-[1000px]">
+            <thead>
+              <tr className="bg-blue-50/80 border-b border-blue-100 text-blue-900/70 text-[12px] font-extrabold uppercase tracking-wider">
+                <th className="py-3 px-4 font-extrabold text-center w-16">순번</th>
+                <th className="py-3 px-4 font-extrabold">교과목명</th>
+                <th className="py-3 px-4 font-extrabold">대학(원)</th>
+                <th className="py-3 px-4 font-extrabold">학과(부)</th>
+                <th className="py-3 px-4 font-extrabold w-24">이수구분</th>
+                <th className="py-3 px-4 font-extrabold w-24 text-center">수업방법</th>
+                <th className="py-3 px-4 font-extrabold w-16 text-center">학점</th>
+                <th className="py-3 px-4 font-extrabold w-24">담당교수</th>
+                <th className="py-3 px-4 font-extrabold">시간표</th>
+                <th className="py-3 px-4 font-extrabold w-16 text-right">수강</th>
+                <th className="py-3 px-4 font-extrabold w-16 text-right">정원</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-blue-900/5 text-[13px] text-blue-900">
+              {currentData.map((course, idx) => {
+                const globalIndex = startIndex + idx + 1
                 return (
                   <tr
-                    key={course.순번}
-                    className="hover:bg-[var(--color-fog)] transition-colors text-[13px] text-[var(--color-carbon)]"
+                    key={`${course.순번}-${idx}`}
+                    className="hover:bg-blue-50/50 transition-colors group"
                   >
-                    {/* 강좌명 + 교수명 */}
-                    <td className="px-5 py-3.5">
-                      <div className="font-semibold text-[var(--color-carbon)]">
-                        <Hl text={course.교과목명 || "-"} query={q} />
-                      </div>
-                      <div className="text-[11px] text-[var(--color-slate)] mt-0.5">
-                        <Hl text={course.담당교수 || "-"} query={q} />
-                        {" | "}
-                        {course["시간표(교시)"] || "-"}
-                      </div>
+                    <td className="py-2.5 px-4 text-center text-blue-400/80 text-[12px] font-mono">
+                      {globalIndex}
                     </td>
-
-                    {/* 대학 */}
-                    <td className="px-4 py-3.5 text-[var(--color-graphite)] truncate max-w-[120px]">
-                      {course["대학(원)"] || "-"}
+                    <td className="py-2.5 px-4 font-bold text-blue-800 truncate max-w-[240px]" title={course.교과목명}>
+                      <Hl text={course.교과목명} query={debouncedQuery} />
                     </td>
-
-                    {/* 학과 */}
-                    <td className="px-4 py-3.5 text-[var(--color-graphite)] truncate max-w-[140px]">
-                      <Hl text={course["학과(부)"] || "-"} query={q} />
-                    </td>
-
-                    {/* 이수구분 badge */}
-                    <td className="px-4 py-3.5">
-                      <span className="text-[var(--color-graphite)] bg-[var(--color-fog)] px-2 py-0.5 rounded-[4px] text-[11px] font-medium">
-                        {course.이수구분 || "-"}
+                    <td className="py-2.5 px-4 text-blue-600/80">{course["대학(원)"]}</td>
+                    <td className="py-2.5 px-4 text-blue-600/80">{course["학과(부)"]}</td>
+                    <td className="py-2.5 px-4">
+                      <span className="bg-white border border-blue-100 px-2 py-0.5 rounded text-[11px] text-blue-600 shadow-sm font-semibold">
+                        {course.이수구분}
                       </span>
                     </td>
-
-                    {/* 수업방법 */}
-                    <td className="px-4 py-3.5 text-[var(--color-graphite)]">
-                      {course.수업방법 || "대면"}
+                    <td className="py-2.5 px-4 text-center">
+                      <span className="text-blue-500/80 text-[12px] font-medium">
+                        {course.수업방법 || "-"}
+                      </span>
                     </td>
-
-                    {/* 학점 */}
-                    <td className="px-4 py-3.5 text-center text-[var(--color-graphite)]">
-                      {course.학점 ? `${course.학점}학점` : "-"}
+                    <td className="py-2.5 px-4 text-center font-bold text-blue-700">
+                      {course.학점}
                     </td>
-
-                    {/* 수강인원 */}
-                    <td className="px-4 py-3.5 text-center text-[var(--color-graphite)] tabular-nums">
-                      {enrolled} / {capacity}
+                    <td className="py-2.5 px-4 font-medium text-blue-700 truncate max-w-[120px]" title={course.담당교수}>
+                      <Hl text={course.담당교수} query={debouncedQuery} />
                     </td>
-
-                    {/* 수강률 */}
-                    <td className="px-5 py-3.5 text-right font-semibold text-[var(--color-carbon)] tabular-nums">
-                      {rate.toFixed(1)}%
+                    <td className="py-2.5 px-4 truncate max-w-[200px] text-blue-600/80 text-[12px]" title={course["시간표(교시)"]}>
+                      {course["시간표(교시)"]}
+                    </td>
+                    <td className="py-2.5 px-4 text-right font-bold text-blue-800">
+                      {course.수강}
+                    </td>
+                    <td className="py-2.5 px-4 text-right font-medium text-blue-400/80">
+                      {course.정원}
                     </td>
                   </tr>
                 )
-              })
-            ) : (
-              /* 검색 결과 없음 */
-              <tr>
-                <td colSpan={8} className="px-6 py-16 text-center">
-                  <div className="flex flex-col items-center gap-2">
-                    <span className="text-2xl select-none">🔍</span>
-                    <span
-                      className="text-[14px] text-[var(--color-slate)]"
-                      style={{ fontFamily: "var(--font-body)" }}
-                    >
-                      검색 결과가 없습니다
-                    </span>
-                    {isSearching && (
-                      <span className="text-[12px] text-[var(--color-slate)] opacity-70">
-                        &ldquo;{debouncedQuery}&rdquo; 에 해당하는 강좌를 찾을 수 없습니다
-                      </span>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* ── Pagination ───────────────────────────────────────── */}
       {totalPages > 1 && (
-        <div className="p-4 border-t border-[var(--color-chalk)] flex items-center justify-center bg-[var(--color-paper)]">
-          <nav className="flex items-center gap-1" aria-label="페이지 네비게이션">
+        <div className="flex justify-center pt-2 relative z-10">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={safePage === 1}
-              className="p-1.5 rounded-full text-[var(--color-slate)] hover:bg-[var(--color-fog)] disabled:opacity-40 disabled:pointer-events-none transition-colors mr-1"
-              aria-label="이전 페이지"
+              className="p-1.5 rounded-full border border-blue-200 text-blue-600 bg-white/50 hover:bg-blue-100 disabled:opacity-30 disabled:hover:bg-white/50 transition-colors shadow-sm"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
 
-            {pageNumbers.map((page, idx) =>
-              page === "ellipsis" ? (
-                <div
-                  key={`ellipsis-${idx}`}
-                  className="w-8 h-8 flex items-center justify-center text-[var(--color-slate)]"
-                >
-                  <MoreHorizontal className="w-4 h-4" />
-                </div>
-              ) : (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page as number)}
-                  className={`w-8 h-8 rounded-full text-xs font-semibold transition-colors ${
-                    page === safePage
-                      ? "bg-[var(--color-signal-orange)] text-white"
-                      : "text-[var(--color-graphite)] hover:bg-[var(--color-fog)]"
-                  }`}
-                  aria-current={page === safePage ? "page" : undefined}
-                >
-                  {page}
-                </button>
-              )
-            )}
+            <div className="flex items-center gap-1.5">
+              {pageNumbers.map((p, i) => {
+                if (p === "ellipsis") {
+                  return (
+                    <span key={`ell-${i}`} className="text-blue-300 px-1">
+                      <MoreHorizontal className="w-4 h-4" />
+                    </span>
+                  )
+                }
+                const isActive = p === safePage
+                return (
+                  <button
+                    key={p}
+                    onClick={() => setCurrentPage(p as number)}
+                    className={`w-8 h-8 rounded-full text-[13px] font-bold transition-all shadow-sm ${
+                      isActive
+                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_2px_8px_rgba(0,75,155,0.3)]"
+                        : "bg-white/50 text-blue-600 border border-blue-100 hover:bg-blue-50"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                )
+              })}
+            </div>
 
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={safePage === totalPages}
-              className="p-1.5 rounded-full text-[var(--color-slate)] hover:bg-[var(--color-fog)] disabled:opacity-40 disabled:pointer-events-none transition-colors ml-1"
-              aria-label="다음 페이지"
+              className="p-1.5 rounded-full border border-blue-200 text-blue-600 bg-white/50 hover:bg-blue-100 disabled:opacity-30 disabled:hover:bg-white/50 transition-colors shadow-sm"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
-          </nav>
+          </div>
         </div>
       )}
     </div>

@@ -1,202 +1,145 @@
 "use client"
 
-import { useState, useCallback } from "react"
 import {
+  ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
   Tooltip,
-  ResponsiveContainer,
-  Sector,
+  Legend,
 } from "recharts"
 
-interface ChartItem {
-  name: string
-  value: number
-  percent: number
-}
-
 interface DistributionChartsProps {
-  teachingMethodData: ChartItem[]
-  creditData: ChartItem[]
+  teachingMethodData: { name: string; value: number }[]
+  creditData: { name: string; value: number }[]
   totalCourses: number
 }
 
-/* ── 색상 팔레트 ───────────────────────────────────────── */
-const METHOD_COLORS = ["#ff682c", "#816729", "#828282", "#a6a6a6", "#cccccc"]
-const CREDIT_COLORS = ["#ff682c", "#816729", "#828282", "#a6a6a6", "#cccccc"]
+// 인천대 블루 테마 차트 색상 (진한 블루부터 밝은 스카이블루까지)
+const COLORS = [
+  "#1E3A8A", // 아주 짙은 네이비
+  "#1D4ED8", // 로열 블루
+  "#3B82F6", // 기본 블루
+  "#60A5FA", // 스카이 블루
+  "#93C5FD", // 라이트 블루
+  "#BFDBFE", // 틴트 블루
+]
 
-/* ── 커스텀 Active Shape (hover 확대) ────────────────────── */
-function ActiveShape(props: any) {
-  const {
-    cx, cy,
-    innerRadius, outerRadius,
-    startAngle, endAngle,
-    fill,
-  } = props
+function DonutTooltip({ active, payload, total }: any) {
+  if (!active || !payload?.length || total === 0) return null
+  const { name, value } = payload[0].payload
+  const percent = ((value / total) * 100).toFixed(1)
   return (
-    <Sector
-      cx={cx}
-      cy={cy}
-      innerRadius={innerRadius}
-      outerRadius={outerRadius + 4}
-      startAngle={startAngle}
-      endAngle={endAngle}
-      fill={fill}
-      stroke="white"
-      strokeWidth={2}
-    />
-  )
-}
-
-/* ── 커스텀 툴팁 ──────────────────────────────────────────── */
-function CustomTooltip({ active, payload }: any) {
-  if (!active || !payload?.length) return null
-  const item = payload[0].payload as ChartItem
-  return (
-    <div className="bg-[var(--color-paper)] border border-[var(--color-chalk)] rounded-[6px] px-4 py-2.5 shadow-[var(--shadow-card)] text-xs">
-      <p className="font-semibold text-[var(--color-carbon)] mb-1">{item.name}</p>
-      <p className="text-[var(--color-slate)]">
-        {item.value.toLocaleString()}개 &nbsp;·&nbsp;
-        <span className="font-semibold text-[var(--color-signal-orange)]">{item.percent.toFixed(1)}%</span>
-      </p>
-    </div>
-  )
-}
-
-/* ── 단일 도넛 차트 카드 ────────────────────────────────── */
-function DonutCard({
-  title,
-  centerLabel,
-  centerValue,
-  data,
-  colors,
-  delay = 0,
-}: {
-  title: string
-  centerLabel: string
-  centerValue: number
-  data: ChartItem[]
-  colors: string[]
-  delay?: number
-}) {
-  const [activeIdx, setActiveIdx] = useState<number | undefined>(undefined)
-
-  const onEnter = useCallback((_: any, idx: number) => setActiveIdx(idx), [])
-  const onLeave = useCallback(() => setActiveIdx(undefined), [])
-
-  return (
-    <div
-      className="bg-[var(--color-paper)] rounded-lg p-6 min-w-0 shadow-[var(--shadow-card)] border-none"
-      style={{ animation: `cardEnter 400ms ease-out ${delay}ms both` }}
-    >
-      {/* Title */}
-      <h3 className="text-[14px] font-semibold text-[var(--color-carbon)] mb-5 flex items-center gap-2">
-        <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-signal-orange)]" />
-        {title}
-      </h3>
-
-      <div className="flex flex-col sm:flex-row items-center gap-6">
-        {/* Donut */}
-        <div className="relative shrink-0 w-[160px] h-[160px] min-w-0">
-          <ResponsiveContainer width="100%" height={160} minHeight={160}>
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={52}
-                outerRadius={72}
-                paddingAngle={2}
-                dataKey="value"
-                strokeWidth={0}
-                {...({
-                  activeIndex: activeIdx,
-                  activeShape: ActiveShape,
-                  onMouseEnter: onEnter,
-                  onMouseLeave: onLeave,
-                  isAnimationActive: true,
-                  animationDuration: 800,
-                  animationEasing: "ease-out",
-                } as any)}
-              >
-                {data.map((_, idx) => (
-                  <Cell
-                    key={idx}
-                    fill={colors[idx % colors.length]}
-                    style={{ cursor: "pointer", outline: "none" }}
-                  />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-            </PieChart>
-          </ResponsiveContainer>
-
-          {/* Center label */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
-            <span className="text-[9px] font-medium text-[var(--color-slate)] uppercase tracking-widest leading-tight">
-              {centerLabel}
-            </span>
-            <span className="text-[17px] font-semibold text-[var(--color-carbon)] leading-tight mt-0.5">
-              {centerValue.toLocaleString()}
-            </span>
-          </div>
-        </div>
-
-        {/* Legend */}
-        <ul className="flex-1 w-full space-y-2.5">
-          {data.map((item, idx) => (
-            <li
-              key={item.name}
-              className="flex items-center justify-between gap-2 group"
-              onMouseEnter={() => setActiveIdx(idx)}
-              onMouseLeave={() => setActiveIdx(undefined)}
-              style={{ cursor: "default" }}
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <span
-                  className="h-2.5 w-2.5 rounded-full shrink-0 transition-transform duration-150 group-hover:scale-125"
-                  style={{ backgroundColor: colors[idx % colors.length] }}
-                />
-                <span className="text-xs text-[var(--color-graphite)] truncate leading-snug">
-                  {item.name}
-                </span>
-              </div>
-              <span className="text-xs font-semibold text-[var(--color-carbon)] shrink-0 tabular-nums">
-                {item.percent.toFixed(1)}%
-              </span>
-            </li>
-          ))}
-        </ul>
+    <div className="bg-white/90 backdrop-blur-md border border-white shadow-[0_4px_12px_rgba(0,75,155,0.15)] rounded-xl px-4 py-3 text-[13px] font-bold text-blue-900">
+      <div className="flex items-center gap-2 mb-1">
+        <span
+          className="w-2 h-2 rounded-full"
+          style={{ backgroundColor: payload[0].payload.fill }}
+        />
+        <span>{name}</span>
+      </div>
+      <div className="pl-4 text-blue-600">
+        {Number(value).toLocaleString()}개 <span className="text-blue-400 text-[11px] ml-1">({percent}%)</span>
       </div>
     </div>
   )
 }
 
-/* ── 메인 컴포넌트 ─────────────────────────────────────── */
+function ChartCard({
+  title,
+  children,
+  delay = 0,
+}: {
+  title: string
+  children: React.ReactNode
+  delay?: number
+}) {
+  return (
+    <div
+      className="bg-white/60 backdrop-blur-md rounded-2xl p-6 min-w-0 shadow-[5px_5px_15px_rgba(0,75,155,0.05)] border border-white/60 hover:shadow-[8px_8px_20px_rgba(0,75,155,0.1)] transition-all duration-300"
+      style={{ animation: `cardEnter 400ms ease-out ${delay}ms both` }}
+    >
+      <h3 className="text-[15px] font-extrabold text-blue-900 mb-6 flex items-center gap-2">
+        <span className="inline-block h-2 w-2 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
+        {title}
+      </h3>
+      <div className="h-[260px] w-full relative">{children}</div>
+    </div>
+  )
+}
+
 export default function DistributionCharts({
   teachingMethodData,
   creditData,
   totalCourses,
 }: DistributionChartsProps) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <DonutCard
-        title="수업방법 유형 분포"
-        centerLabel="TOTAL"
-        centerValue={totalCourses}
-        data={teachingMethodData}
-        colors={METHOD_COLORS}
-        delay={480}
-      />
-      <DonutCard
-        title="학점 구성 비율"
-        centerLabel="COURSES"
-        centerValue={totalCourses}
-        data={creditData}
-        colors={CREDIT_COLORS}
-        delay={560}
-      />
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-8">
+      {/* 3. 수업방법 유형 분포 */}
+      <ChartCard title="수업방법 유형 분포" delay={350}>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={teachingMethodData}
+              cx="50%"
+              cy="45%"
+              innerRadius={70} // 매우 슬림하게
+              outerRadius={90}
+              paddingAngle={4} // 간격을 두어 세련되게
+              dataKey="value"
+              stroke="none"
+              cornerRadius={10}
+            >
+              {teachingMethodData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip
+              content={<DonutTooltip total={totalCourses} />}
+              cursor={false}
+            />
+            <Legend
+              verticalAlign="bottom"
+              height={36}
+              iconType="circle"
+              wrapperStyle={{ fontSize: "12px", color: "#1E3A8A", fontWeight: 600 }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </ChartCard>
+
+      {/* 4. 학점 구성 비율 */}
+      <ChartCard title="학점 구성 비율" delay={450}>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={creditData}
+              cx="50%"
+              cy="45%"
+              innerRadius={70} // 매우 슬림하게
+              outerRadius={90}
+              paddingAngle={4}
+              dataKey="value"
+              stroke="none"
+              cornerRadius={10}
+            >
+              {creditData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip
+              content={<DonutTooltip total={totalCourses} />}
+              cursor={false}
+            />
+            <Legend
+              verticalAlign="bottom"
+              height={36}
+              iconType="circle"
+              wrapperStyle={{ fontSize: "12px", color: "#1E3A8A", fontWeight: 600 }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </ChartCard>
     </div>
   )
 }
