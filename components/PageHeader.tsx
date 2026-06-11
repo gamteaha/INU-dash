@@ -1,6 +1,7 @@
 "use client"
 
 import { useDashboard } from "@/context/DashboardFilterContext"
+import { Sparkles } from "lucide-react"
 
 interface PageHeaderProps {
   college?: string
@@ -15,9 +16,8 @@ export default function PageHeader({
   totalCourses,
   onAiAnalysis,
 }: PageHeaderProps) {
-  const { setSelectedCollege, setSelectedDepartment, isLoading } = useDashboard()
+  const { isLoading } = useDashboard()
 
-  // Derive page title
   const pageTitle = department
     ? `${department} 교과목 대시보드`
     : college
@@ -30,63 +30,23 @@ export default function PageHeader({
     : `${filterLabel} | ${totalCourses.toLocaleString()}개 강좌`
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-chalk)] pb-6 mb-2">
-      <div className="flex flex-col gap-2">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-[12px] font-normal text-[var(--color-slate)]">
-          <button
-            onClick={() => { setSelectedCollege(null); setSelectedDepartment(null) }}
-            className="flex items-center gap-1 hover:text-[var(--color-signal-orange)] transition-colors"
-          >
-            <span>🏠 홈</span>
-          </button>
-
-          <span className="text-[var(--color-slate)]">/</span>
-
-          {!college ? (
-            <span className="text-[var(--color-carbon)] font-medium">전체 대시보드</span>
-          ) : (
-            <>
-              {department ? (
-                <button
-                  onClick={() => { setSelectedCollege(college); setSelectedDepartment(null) }}
-                  className="hover:text-[var(--color-signal-orange)] transition-colors"
-                >
-                  {college}
-                </button>
-              ) : (
-                <span className="text-[var(--color-carbon)] font-medium">{college}</span>
-              )}
-            </>
-          )}
-
-          {department && (
-            <>
-              <span className="text-[var(--color-slate)]">/</span>
-              <span className="text-[var(--color-carbon)] font-medium">{department}</span>
-            </>
-          )}
-        </nav>
-
+    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-2">
+      <div className="flex flex-col gap-1">
         {/* Page Title */}
-        <h1
-          className="text-[32px] font-normal tracking-[-0.64px] text-[var(--color-carbon)] leading-tight"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
+        <h1 className="text-[28px] font-medium tracking-tight text-[var(--color-paper)] leading-tight">
           {pageTitle}
         </h1>
-
         {/* Subtitle */}
-        <p className="text-[14px] font-normal text-[var(--color-slate)]">{subtitle}</p>
+        <p className="text-[14px] font-normal text-[var(--color-smoke)]">{subtitle}</p>
       </div>
 
-      {/* AI Analysis Button - Filled Pill Button */}
+      {/* AI Analysis Button */}
       <button
         onClick={onAiAnalysis}
         disabled={isLoading}
-        className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-[20px] bg-[var(--color-carbon)] hover:bg-[var(--color-graphite)] text-white text-[14px] font-medium shadow-[0_1px_3px_rgba(32,32,32,0.04)] whitespace-nowrap self-start sm:self-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-[var(--radius-buttons)] bg-[var(--color-iron)]/60 backdrop-blur-md border border-[var(--color-bone)]/10 hover:bg-[var(--color-iron)] text-[var(--color-bone)] text-[14px] font-medium whitespace-nowrap self-start sm:self-start transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <span className="text-[#ff682c]">✨</span>
+        <Sparkles className="w-4 h-4 text-[var(--color-indigo-haze)]" />
         AI 강의 분석
       </button>
     </div>

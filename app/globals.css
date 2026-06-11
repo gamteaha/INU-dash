@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard-dynamic-subset.css');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -7,164 +8,150 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-heading);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --color-void: #0D1B2A;
+  --color-deep: #112236;
+  --color-char: #162942;
+  --color-iron: #1E3656;
+  --color-slate: #2e3a5a;
+  --color-smoke: #5a6a8a;
+  --color-graphite: #0d1120;
+  --color-ink: #192035;
+  --color-fog: #6b7a9a;
+  --color-mist: #b0bdd0;
+  --color-ash: #8a9ab0;
+  --color-bone: #d8e0f0;
+  --color-paper: #ffffff;
+  --color-onyx: #000000;
+  --color-indigo-haze: #6b62f2;
+  --color-indigo-bright: #7c6fff;
+  --color-dawn-wash: #9cafb8;
+
+  --font-sans: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-geist: 'Geist', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --radius-pill: 9999px;
+  --radius-tags: 9999px;
+  --radius-cards: 16px;
+  --radius-inputs: 10px;
+  --radius-buttons: 9999px;
+  --radius-iconcontainers: 4px;
+  --radius-largecontainers: 40px;
 }
 
 :root {
-  /* Ventriloc CSS Custom Properties */
-  --color-signal-orange: #ff682c;
-  --color-sienna-bronze: #816729;
-  --color-carbon: #202020;
-  --color-graphite: #4d4d4d;
-  --color-slate: #828282;
-  --color-fog: #f5f5f5;
-  --color-mist: #efefef;
-  --color-chalk: #e8e8e8;
+  /* Deep Space Colors */
+  --color-void: #0D1B2A;
+  --color-deep: #112236;
+  --color-char: #162942;
+  --color-iron: #1E3656;
+  --color-slate: #2e3a5a;
+  --color-smoke: #5a6a8a;
+  --color-graphite: #0d1120;
+  --color-ink: #192035;
+  --color-fog: #6b7a9a;
+  --color-mist: #b0bdd0;
+  --color-ash: #8a9ab0;
+  --color-bone: #d8e0f0;
   --color-paper: #ffffff;
-  --font-display: 'Space Grotesk', 'DM Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --radius-card: 8px;
-  --radius-button: 20px;
-  --radius-pill: 200px;
-  --shadow-card: 0 1px 3px rgba(32,32,32,0.04), 0 4px 12px rgba(32,32,32,0.03);
+  --color-onyx: #000000;
+  --color-indigo-haze: #6b62f2;
+  --color-indigo-bright: #7c6fff;
+  --color-dawn-wash: #9cafb8;
+  --gradient-indigo-haze: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(107,98,242,0.4) 50%, rgba(0,0,0,0));
+  --gradient-dawn-wash: linear-gradient(180deg, rgb(72,103,175), rgb(156,175,184), rgb(196,149,119));
 
-  /* Ventriloc Color System mappings */
-  --background: var(--color-mist);
-  --foreground: var(--color-carbon);
-  --card: var(--color-paper);
-  --card-foreground: var(--color-carbon);
-  --popover: var(--color-paper);
-  --popover-foreground: var(--color-carbon);
-  --primary: var(--color-carbon);
-  --primary-foreground: var(--color-paper);
-  --secondary: var(--color-fog);
-  --secondary-foreground: var(--color-carbon);
-  --muted: var(--color-fog);
-  --muted-foreground: var(--color-slate);
-  --accent: var(--color-fog);
-  --accent-foreground: var(--color-carbon);
-  --destructive: #EF4444;
-  --destructive-foreground: #ffffff;
-  --border: var(--color-chalk);
-  --input: var(--color-chalk);
-  --ring: var(--color-signal-orange);
-  --radius: var(--radius-card);
-  --sidebar: var(--color-paper);
-  --sidebar-foreground: var(--color-carbon);
-  --sidebar-primary: var(--color-signal-orange);
-  --sidebar-primary-foreground: var(--color-paper);
-  --sidebar-accent: var(--color-fog);
-  --sidebar-accent-foreground: var(--color-carbon);
-  --sidebar-border: var(--color-chalk);
-  --sidebar-ring: var(--color-signal-orange);
+  /* Glassmorphism Surfaces */
+  --glass-surface: rgba(255, 255, 255, 0.05);
+  --glass-surface-elevated: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-border-bright: rgba(255, 255, 255, 0.25);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --glass-shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(100, 180, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 
-  /* Font mapping */
-  --font-sans: var(--font-body);
-  --font-heading: var(--font-display);
+  /* Typography */
+  --font-dm-sans: 'Pretendard', ui-sans-serif, system-ui, sans-serif;
+  --font-geist: 'Geist', ui-sans-serif, system-ui, sans-serif;
+
+  /* Layout */
+  --section-gap: 80px;
+  --page-max-width: 1200px;
+  --card-padding: 24px;
 }
 
-.dark {
-  --background: #0B0F19;
-  --foreground: #F3F4F6;
-  --card: #111827;
-  --card-foreground: #F3F4F6;
-  --popover: #111827;
-  --popover-foreground: #F3F4F6;
-  --primary: #6366F1;
-  --primary-foreground: #FFFFFF;
-  --secondary: #1F2937;
-  --secondary-foreground: #F3F4F6;
-  --muted: #1F2937;
-  --muted-foreground: #9CA3AF;
-  --accent: #1E1B4B;
-  --accent-foreground: #818CF8;
-  --destructive: #EF4444;
-  --destructive-foreground: #FFFFFF;
-  --border: #1F2937;
-  --input: #1F2937;
-  --ring: #6366F1;
-  --sidebar: #111827;
-  --sidebar-foreground: #F3F4F6;
-  --sidebar-primary: #6366F1;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #1E1B4B;
-  --sidebar-accent-foreground: #818CF8;
-  --sidebar-border: #1F2937;
-  --sidebar-ring: #6366F1;
+/* ── Deep Space Background ─────────────────────────────────── */
+body {
+  background-color: var(--color-void);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 70% -10%, rgba(100, 180, 255, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at -10% 80%, rgba(91, 200, 245, 0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(168, 216, 240, 0.05) 0%, transparent 70%);
+  background-attachment: fixed;
+  color: var(--color-bone);
+  font-family: var(--font-sans);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
+/* ── Glass Card Utility ────────────────────────────────────── */
+.glass-card {
+  background: var(--glass-surface);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-cards);
+  box-shadow: var(--glass-shadow);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.glass-card-elevated {
+  background: var(--glass-surface-elevated);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--glass-border-bright);
+  border-radius: var(--radius-cards);
+  box-shadow: var(--glass-shadow-elevated);
+}
+
+/* ── Top-edge shimmer on cards ─────────────────────────────── */
+.glass-card::before,
+.glass-card-elevated::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .text-glow-blue {
+    text-shadow: 0 0 20px rgba(100, 180, 255, 0.4);
   }
 }
 
-/* ── Entrance animation ─────────────────────────────── */
+/* ── Keyframes ─────────────────────────────────────────────── */
 @keyframes cardEnter {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Respect prefers-reduced-motion ─────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
 }
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(107,98,242,0.15); }
+  50%       { box-shadow: 0 0 40px rgba(107,98,242,0.30); }
+}
+
+/* ── Custom Scrollbar ─────────────────────────────────────── */
+.custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(107,98,242,0.3); border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(107,98,242,0.6); }

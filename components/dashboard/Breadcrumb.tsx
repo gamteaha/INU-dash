@@ -4,32 +4,47 @@ import { useDashboard } from "@/context/DashboardFilterContext"
 import { ChevronRight, Home } from "lucide-react"
 
 export default function Breadcrumb() {
-  const { selectedCollege, selectedDepartment } = useDashboard()
+  const { selectedCollege, selectedDepartment, setSelectedCollege, setSelectedDepartment } = useDashboard()
+
+  const handleHomeClick = () => {
+    setSelectedCollege(null)
+    setSelectedDepartment(null)
+  }
+
+  const handleCollegeClick = () => {
+    setSelectedDepartment(null)
+  }
 
   return (
-    <div className="flex items-center gap-2 text-[14px] font-bold text-blue-900/60 mb-6 bg-white/40 backdrop-blur-sm px-4 py-2 rounded-full w-fit border border-white/50 shadow-[2px_2px_8px_rgba(0,0,0,0.02)]">
-      <div className="flex items-center gap-1.5 hover:text-blue-600 transition-colors cursor-pointer">
-        <Home className="w-4 h-4" />
+    <nav className="flex items-center gap-2 text-[13px] font-medium text-[var(--color-mist)] bg-[var(--color-char)]/50 backdrop-blur-md px-4 py-2.5 rounded-[var(--radius-inputs)] border border-[var(--color-bone)]/5 w-fit">
+      <button 
+        onClick={handleHomeClick}
+        className="flex items-center gap-1.5 hover:text-[var(--color-bone)] transition-colors"
+      >
+        <Home className="w-3.5 h-3.5" />
         <span>홈</span>
-      </div>
+      </button>
       
       {selectedCollege && (
         <>
-          <ChevronRight className="w-4 h-4 text-blue-900/30" />
-          <span className={`${!selectedDepartment ? "text-blue-900" : "hover:text-blue-600 cursor-pointer transition-colors"}`}>
+          <ChevronRight className="w-3.5 h-3.5 text-[var(--color-smoke)]" />
+          <button 
+            onClick={handleCollegeClick}
+            className={`hover:text-[var(--color-bone)] transition-colors ${!selectedDepartment ? "text-[var(--color-bone)] font-semibold" : ""}`}
+          >
             {selectedCollege}
-          </span>
+          </button>
         </>
       )}
 
-      {selectedDepartment && (
+      {selectedCollege && selectedDepartment && (
         <>
-          <ChevronRight className="w-4 h-4 text-blue-900/30" />
-          <span className="text-blue-900">
+          <ChevronRight className="w-3.5 h-3.5 text-[var(--color-smoke)]" />
+          <span className="text-[var(--color-bone)] font-semibold">
             {selectedDepartment}
           </span>
         </>
       )}
-    </div>
+    </nav>
   )
 }

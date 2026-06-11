@@ -45,7 +45,7 @@ export default function AiAnalysisModal({
 
   const hasStarted = useRef(false)
 
-  // 모달이 열리면 자동으로 fetchAnalysis() 호출
+  // 모달이 열리면 자동으로 분석 시작
   useEffect(() => {
     if (isOpen && !hasStarted.current) {
       hasStarted.current = true
@@ -87,64 +87,74 @@ export default function AiAnalysisModal({
   const isGenerating = isLoading || (!completion && !error)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+        className="absolute inset-0 bg-[var(--color-void)]/70 backdrop-blur-sm transition-opacity"
         onClick={!isLoading ? onClose : undefined}
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-[600px] bg-white rounded-lg border border-[#e8e8e8] shadow-[0_4px_12px_rgba(32,32,32,0.03)] overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-[640px] bg-[var(--color-char)]/95 backdrop-blur-[24px] rounded-[var(--radius-cards)] border border-[var(--color-bone)]/10 shadow-[0_24px_48px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in slide-in-from-bottom-4 duration-200">
+        
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#e8e8e8] flex items-center justify-between shrink-0 bg-white">
-          <h2 className="text-base font-semibold text-[#202020] flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[#ff682c]" />
-            💡 AI 강의 데이터 종합 분석
+        <div className="px-6 py-4 border-b border-[var(--color-bone)]/10 flex items-center justify-between shrink-0">
+          <h2 className="text-[15px] font-medium text-[var(--color-bone)] flex items-center gap-2.5">
+            <Sparkles className="w-5 h-5 text-[var(--color-indigo-haze)]" />
+            AI 강의 데이터 종합 분석
           </h2>
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="p-1.5 text-[#828282] hover:bg-[#f5f5f5] rounded-lg transition-colors disabled:opacity-50"
+            className="p-1.5 text-[var(--color-smoke)] hover:text-[var(--color-bone)] hover:bg-[var(--color-iron)]/50 rounded-[var(--radius-iconcontainers)] transition-colors disabled:opacity-50"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-6 bg-[#f5f5f5]">
+        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
           {isGenerating && !completion ? (
             // 로딩 상태
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <Loader2 className="w-10 h-10 text-[#ff682c] animate-spin mb-4" />
-              <p className="text-[#202020] font-semibold text-base mb-2">
-                Gemini 3.1 Flash-Lite 모델이 통계를 분석 중입니다...
-              </p>
-              <p className="text-[#828282] text-xs">
-                대시보드 데이터를 종합적으로 해석하여 보고서를 작성하고 있습니다.
-              </p>
+            <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-[var(--color-iron)]/50 flex items-center justify-center">
+                <Loader2 className="w-7 h-7 text-[var(--color-indigo-haze)] animate-spin" />
+              </div>
+              <div>
+                <p className="text-[16px] font-medium text-[var(--color-bone)] mb-1">
+                  Gemini 3.1 Flash-Lite 분석 중
+                </p>
+                <p className="text-[13px] text-[var(--color-smoke)]">
+                  대시보드 데이터를 종합적으로 해석하여 보고서를 작성하고 있습니다.
+                </p>
+              </div>
             </div>
           ) : error ? (
             // 에러 상태
-            <div className="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-lg text-sm">
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-[var(--radius-inputs)] text-sm">
               ⚠️ 분석 중 오류가 발생했습니다: {error.message}
             </div>
           ) : (
             // 결과 상태
-            <div className="bg-white border border-[#e8e8e8] rounded-lg p-6 shadow-sm">
-              <div className="mb-6 pb-4 border-b border-[#e8e8e8] bg-[#f5f5f5] -mx-6 -mt-6 px-6 pt-6 rounded-t-lg">
-                <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-[#202020]">
-                  <span className="bg-[#202020] text-white px-2.5 py-1 rounded-[20px]">
-                    분석 대상: {target}
-                  </span>
-                  <span className="text-[#828282]">
-                    일자: {new Date().toLocaleDateString("ko-KR")}
-                  </span>
-                </div>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-wrap items-center gap-3 text-[12px] pb-4 border-b border-[var(--color-bone)]/10">
+                <span className="bg-[var(--color-iron)] text-[var(--color-bone)] border border-[var(--color-bone)]/10 px-3 py-1 rounded-[var(--radius-tags)] font-medium">
+                  분석 대상: {target}
+                </span>
+                <span className="text-[var(--color-smoke)]">
+                  {new Date().toLocaleDateString("ko-KR")}
+                </span>
               </div>
 
               {/* Markdown Content */}
-              <article className="prose prose-sm md:prose-base prose-neutral max-w-none prose-headings:font-semibold prose-headings:text-[#202020] prose-h1:text-xl prose-h2:text-lg prose-h3:text-base prose-p:text-[#4d4d4d] prose-li:text-[#4d4d4d]">
+              <article className="prose prose-invert prose-sm md:prose-base max-w-none
+                prose-headings:font-medium prose-headings:text-[var(--color-bone)] prose-headings:tracking-tight
+                prose-h1:text-xl prose-h2:text-lg prose-h3:text-base
+                prose-p:text-[var(--color-mist)] prose-p:leading-relaxed
+                prose-li:text-[var(--color-mist)]
+                prose-strong:text-[var(--color-bone)]
+                prose-code:text-[var(--color-indigo-haze)] prose-code:bg-[var(--color-iron)]/50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-[13px]
+                prose-hr:border-[var(--color-bone)]/10">
                 <ReactMarkdown>{completion}</ReactMarkdown>
               </article>
             </div>
@@ -152,19 +162,19 @@ export default function AiAnalysisModal({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-[#e8e8e8] bg-white shrink-0 flex justify-end gap-3">
+        <div className="px-6 py-4 border-t border-[var(--color-bone)]/10 shrink-0 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-5 py-2.5 text-xs font-semibold text-[#202020] bg-white border border-[#202020] rounded-[20px] hover:bg-[#f5f5f5] transition-colors"
+            className="px-5 py-2.5 text-[13px] font-medium text-[var(--color-mist)] bg-[var(--color-iron)]/50 border border-[var(--color-bone)]/10 hover:bg-[var(--color-iron)] rounded-[var(--radius-buttons)] transition-colors"
           >
             닫기
           </button>
           <button
             onClick={handleDownload}
             disabled={!completion || isLoading}
-            className="px-5 py-2.5 text-xs font-semibold text-white bg-[#202020] hover:bg-[#4d4d4d] rounded-[20px] transition-colors disabled:opacity-50 disabled:pointer-events-none flex items-center gap-2"
+            className="px-5 py-2.5 text-[13px] font-medium text-[var(--color-void)] bg-[var(--color-bone)] hover:opacity-90 rounded-[var(--radius-buttons)] transition-opacity disabled:opacity-40 disabled:pointer-events-none flex items-center gap-2"
           >
-            <Download className="w-4 h-4 text-[#ff682c]" />
+            <Download className="w-4 h-4" />
             보고서 다운로드 (.md)
           </button>
         </div>

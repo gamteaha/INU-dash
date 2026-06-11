@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useMemo } from "react"
 import { useDashboardFilter } from "@/context/DashboardFilterContext"
-import { COLLEGE_HIERARCHY } from "@/lib/supabase/constants"
+import { COLLEGE_HIERARCHY, mapCollegeName } from "@/lib/supabase/constants"
 import { X } from "lucide-react"
 import { createRoot } from "react-dom/client"
 
@@ -105,9 +105,7 @@ export default function CampusMap() {
     })
 
     allCourses.forEach((course) => {
-      const col = course["대학(원)"]
-      const hierarchy = COLLEGE_HIERARCHY.find(h => h.dbColleges.includes(col))
-      const mainCollege = hierarchy ? hierarchy.college : col
+      const mainCollege = mapCollegeName(course["대학(원)"])
 
       if (mainCollege && stats[mainCollege]) {
         stats[mainCollege].count++
@@ -150,17 +148,18 @@ export default function CampusMap() {
       const bubble = document.createElement("div")
       bubble.style.width = `${size}px`
       bubble.style.height = `${size}px`
-      bubble.style.background = "rgba(255,104,44,0.88)"
-      bubble.style.border = "2.5px solid white"
+      bubble.style.background = isSelected ? "rgba(107,98,242,0.95)" : "rgba(29,29,29,0.88)"
+      bubble.style.border = isSelected ? "2px solid rgba(107,98,242,0.8)" : "2px solid rgba(229,229,229,0.2)"
       bubble.style.borderRadius = "50%"
       bubble.style.display = "flex"
       bubble.style.flexDirection = "column"
       bubble.style.alignItems = "center"
       bubble.style.justifyContent = "center"
       bubble.style.cursor = "pointer"
-      bubble.style.boxShadow = "0 2px 12px rgba(255,104,44,0.45)"
-      bubble.style.transition = "transform 0.18s"
+      bubble.style.boxShadow = isSelected ? "0 0 16px rgba(107,98,242,0.5)" : "0 2px 12px rgba(0,0,0,0.5)"
+      bubble.style.transition = "transform 0.18s, background 0.18s"
       bubble.style.userSelect = "none"
+      bubble.style.backdropFilter = "blur(8px)"
       bubble.style.transform = "scale(1)"
 
       bubble.onmouseenter = () => bubble.style.transform = "scale(1.15)"
@@ -171,33 +170,32 @@ export default function CampusMap() {
       }
 
       bubble.innerHTML = `
-        <span style="color: white; font-size: 13px; font-weight: 700; line-height: 1;">${courseCount}</span>
-        <span style="color: rgba(255,255,255,0.8); font-size: 9px; line-height: 1.4;">강좌</span>
+        <span style="color: #e5e5e5; font-size: 13px; font-weight: 600; line-height: 1; font-family: 'Geist', sans-serif;">${courseCount}</span>
+        <span style="color: rgba(229,229,229,0.6); font-size: 9px; line-height: 1.4;">강좌</span>
       `
       content.appendChild(bubble)
 
       // Popup
       if (isSelected) {
         const popup = document.createElement("div")
-        popup.className = "absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-white rounded-[10px] shadow-[0_4px_16px_rgba(0,0,0,0.12)] p-4 min-w-[180px] pointer-events-auto z-[30]"
+        popup.className = "absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 rounded-[14px] shadow-[0_8px_32px_rgba(0,0,0,0.5)] p-4 min-w-[180px] pointer-events-auto z-[30]"
+        popup.style.background = "rgba(29,29,29,0.92)"
+        popup.style.backdropFilter = "blur(16px)"
+        popup.style.border = "1px solid rgba(229,229,229,0.12)"
         popup.onclick = (e) => e.stopPropagation()
 
         popup.innerHTML = `
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[14px] font-semibold text-[#202020]">${building.college}</span>
-            <button id="close-btn-${building.college}" class="text-[#828282] hover:text-[#202020] transition-colors cursor-pointer" style="border: none; background: none; padding: 0;">
-              ✕
-            </button>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 14px; font-weight: 600; color: #e5e5e5;">${building.college}</span>
+            <button id="close-btn-${building.college}" style="color: #797979; background: none; border: none; padding: 0; cursor: pointer; font-size: 14px;">✕</button>
           </div>
-          <div class="flex flex-col gap-1 mb-3">
-            <span class="text-[24px] text-[#ff682c] leading-none tracking-tight" style="font-family: var(--font-display)">${courseCount}개</span>
-            <span class="text-[12px] text-[#828282]">평균 수강인원: ${avgEnrolled}명</span>
+          <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px;">
+            <span style="font-size: 24px; color: #e5e5e5; line-height: 1; font-family: 'Geist', sans-serif; font-weight: 400;">${courseCount}개</span>
+            <span style="font-size: 12px; color: #797979;">평균 수강인원: ${avgEnrolled}명</span>
           </div>
-          <div class="w-full h-[1px] bg-[#e8e8e8] my-3"></div>
-          <button id="filter-btn-${building.college}" class="w-full bg-[#202020] text-white rounded-[20px] py-2 px-4 text-[13px] font-medium hover:bg-black transition-colors flex items-center justify-center gap-1 cursor-pointer" style="border: none;">
-            → 대시보드 필터 적용
-          </button>
-          <div class="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-white"></div>
+          <div style="width: 100%; height: 1px; background: rgba(229,229,229,0.1); margin: 8px 0;"></div>
+          <button id="filter-btn-${building.college}" style="width: 100%; background: #e5e5e5; color: #0a0a0a; border-radius: 9999px; padding: 8px 16px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.15s;">필터 적용 →</button>
+          <div style="position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: rgba(29,29,29,0.92);"></div>
         `
         content.appendChild(popup)
 
@@ -230,14 +228,11 @@ export default function CampusMap() {
   }, [mapInstance, buildingStats, selectedBuilding, maxCourseCount, setSelectedCollege])
 
   return (
-    <div className="bg-white/60 backdrop-blur-md rounded-3xl p-6 mb-8 shadow-[5px_5px_20px_rgba(0,75,155,0.08)] flex flex-col gap-4 border border-white/60 min-h-[500px] overflow-hidden relative group">
-      {/* Decorative gradient orb */}
-      <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700 pointer-events-none" />
+    <div className="bg-[var(--color-char)]/85 backdrop-blur-[16px] rounded-[var(--radius-cards)] p-6 md:p-8 mb-8 shadow-[0_4px_16px_rgba(0,0,0,0.2)] flex flex-col gap-6 border border-[var(--color-bone)]/10 min-h-[500px] overflow-hidden relative">
 
       <div className="flex items-center justify-between relative z-10">
-        <h3 className="text-[16px] font-extrabold text-blue-900 flex items-center gap-2">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
-          캠퍼스 강좌 분포
+        <h3 className="text-[15px] font-medium text-[var(--color-bone)] flex items-center gap-3">
+          Campus Map
         </h3>
         <span
           className="text-[11px] text-[var(--color-slate)]"
@@ -248,28 +243,34 @@ export default function CampusMap() {
       </div>
 
       {/* Map Container */}
-      <div className="relative w-full flex-1 rounded-2xl overflow-hidden border border-blue-900/10 shadow-inner min-h-[400px] z-10">
-        <div ref={mapRef} className="w-full h-full" />
+      <div className="relative w-full h-[500px] rounded-[var(--radius-inputs)] overflow-hidden bg-[var(--color-void)] border border-[var(--color-bone)]/10 z-10">
+        <div ref={mapRef} style={{ width: "100%", height: "100%" }} />
         {!isLoaded && (
-          <div className="absolute inset-0 bg-blue-50/80 backdrop-blur-sm flex items-center justify-center">
-            <span className="text-[14px] text-blue-800 font-bold animate-pulse">지도 불러오는 중...</span>
+          <div className="absolute inset-0 bg-[var(--color-char)]/80 backdrop-blur-sm flex items-center justify-center">
+            <span className="text-[14px] text-[var(--color-mist)] font-medium animate-pulse">Initializing map...</span>
           </div>
         )}
         {isLoaded && (
-          <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
-            <button
-              onClick={() => setMapTypeId("SKYVIEW")}
-              className={`bg-white border border-[#e8e8e8] rounded-lg px-3.5 py-2 text-[12px] font-medium cursor-pointer shadow-[0_1px_4px_rgba(0,0,0,0.08)] transition-colors hover:bg-[#f5f5f5] ${mapTypeId === "SKYVIEW" ? "text-[#ff682c] border-[#ff682c]" : "text-[#202020]"
-                }`}
-            >
-              🛰 위성뷰
-            </button>
+          <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
             <button
               onClick={() => setMapTypeId("ROADMAP")}
-              className={`bg-white border border-[#e8e8e8] rounded-lg px-3.5 py-2 text-[12px] font-medium cursor-pointer shadow-[0_1px_4px_rgba(0,0,0,0.08)] transition-colors hover:bg-[#f5f5f5] ${mapTypeId === "ROADMAP" ? "text-[#ff682c] border-[#ff682c]" : "text-[#202020]"
-                }`}
+              className={`px-4 py-2 text-[13px] font-medium rounded-[var(--radius-buttons)] transition-colors shadow-sm backdrop-blur-md ${
+                mapTypeId === "ROADMAP"
+                  ? "bg-[var(--color-bone)] text-[var(--color-void)]"
+                  : "bg-[var(--color-char)]/80 text-[var(--color-bone)] border border-[var(--color-bone)]/10 hover:bg-[var(--color-iron)]"
+              }`}
             >
-              🗺 지도뷰
+              Map
+            </button>
+            <button
+              onClick={() => setMapTypeId("SKYVIEW")}
+              className={`px-4 py-2 text-[13px] font-medium rounded-[var(--radius-buttons)] transition-colors shadow-sm backdrop-blur-md ${
+                mapTypeId === "SKYVIEW"
+                  ? "bg-[var(--color-bone)] text-[var(--color-void)]"
+                  : "bg-[var(--color-char)]/80 text-[var(--color-bone)] border border-[var(--color-bone)]/10 hover:bg-[var(--color-iron)]"
+              }`}
+            >
+              Satellite
             </button>
           </div>
         )}

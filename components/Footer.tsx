@@ -1,58 +1,47 @@
-import Link from "next/link"
-
 export default function Footer() {
   return (
-    <footer className="w-full mt-auto relative z-10 p-4 md:p-8">
-      <div className="max-w-[1200px] mx-auto bg-white/60 backdrop-blur-md shadow-[5px_5px_15px_rgba(0,0,0,0.05)] border border-white/40 rounded-2xl p-6 md:p-8 flex flex-col gap-6">
+    <footer className="w-full mt-auto relative z-10 py-12">
+      <div className="flex flex-col items-center gap-6">
+        {/* Hairline divider */}
+        <div className="h-[1px] w-full bg-[var(--color-bone)]/10" />
         
-        {/* Top Row */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          {/* Left: Branding & Creator Name */}
-          <div className="flex flex-col gap-1">
-            <span className="text-[18px] font-extrabold tracking-tight text-blue-900">
-              INCHEON NATIONAL UNIVERSITY
-            </span>
-            <span className="text-[13px] font-medium text-blue-700/80">
-              인천대학교 2026-1 교과목 대시보드
-            </span>
-            <span className="text-[14px] font-bold text-blue-600 mt-1">
-              제작: 김태희 (KIM TAE HEE)
-            </span>
-          </div>
-
-          {/* Right: Links */}
-          <nav className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6" aria-label="외부 링크">
-            <a
-              href="https://www.inu.ac.kr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[14px] font-semibold text-blue-800 hover:text-blue-500 transition-colors bg-white/50 px-4 py-2 rounded-full shadow-[2px_2px_8px_rgba(0,0,0,0.04)] border border-white/60 hover:shadow-[4px_4px_12px_rgba(0,0,0,0.08)]"
-            >
-              인천대학교 홈페이지
-            </a>
-            <a
-              href="https://portal.inu.ac.kr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[14px] font-semibold text-blue-800 hover:text-blue-500 transition-colors bg-white/50 px-4 py-2 rounded-full shadow-[2px_2px_8px_rgba(0,0,0,0.04)] border border-white/60 hover:shadow-[4px_4px_12px_rgba(0,0,0,0.08)]"
-            >
-              INU 포털
-            </a>
-            <a
-              href="https://cyber.inu.ac.kr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[14px] font-semibold text-blue-800 hover:text-blue-500 transition-colors bg-white/50 px-4 py-2 rounded-full shadow-[2px_2px_8px_rgba(0,0,0,0.04)] border border-white/60 hover:shadow-[4px_4px_12px_rgba(0,0,0,0.08)]"
-            >
-              이러닝
-            </a>
-          </nav>
+        {/* Links Row */}
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
+          <a
+            href="https://www.inu.ac.kr"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[14px] font-medium text-[var(--color-mist)] hover:text-[var(--color-bone)] transition-colors"
+          >
+            인천대학교 홈페이지
+          </a>
+          <span className="w-[1px] h-[12px] bg-[var(--color-smoke)]" />
+          <a
+            href="https://portal.inu.ac.kr"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[14px] font-medium text-[var(--color-mist)] hover:text-[var(--color-bone)] transition-colors"
+          >
+            INU 포털
+          </a>
+          <span className="w-[1px] h-[12px] bg-[var(--color-smoke)]" />
+          <a
+            href="https://elearning.inu.ac.kr"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[14px] font-medium text-[var(--color-mist)] hover:text-[var(--color-bone)] transition-colors"
+          >
+            이러닝
+          </a>
         </div>
 
-        {/* Bottom copyright row */}
-        <div className="pt-4 flex flex-col sm:flex-row items-center justify-between border-t border-blue-900/10">
-          <p className="text-[12px] font-medium text-blue-900/50">
-            © 2026 Incheon National University. All rights reserved.
+        {/* Credit */}
+        <div className="flex flex-col items-center gap-1 text-center">
+          <p className="text-[13px] text-[var(--color-fog)]">
+            © 2026 인천대학교 2026-1 강의시간표 대시보드
+          </p>
+          <p className="text-[13px] text-[var(--color-smoke)]">
+            Designed &amp; Built by <span className="text-[var(--color-mist)] font-medium">김태희 (KIM TAE HEE)</span>
           </p>
         </div>
       </div>

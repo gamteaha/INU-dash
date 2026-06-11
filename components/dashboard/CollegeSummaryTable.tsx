@@ -1,4 +1,7 @@
+"use client"
+
 import { useDashboard } from "@/context/DashboardFilterContext"
+import { ArrowRight } from "lucide-react"
 
 interface CollegeRow {
   rank: number
@@ -9,57 +12,82 @@ interface CollegeRow {
 }
 
 interface CollegeSummaryTableProps {
+  title: string
   data: CollegeRow[]
 }
 
-export default function CollegeSummaryTable({ data }: CollegeSummaryTableProps) {
-  const { setSelectedCollege, setSelectedDepartment } = useDashboard()
+const RANK_COLORS = ["#A8D8F0", "#64B4FF", "#5BC8F5", "#1A6EBF", "#0F4C81"]
+
+export default function CollegeSummaryTable({ title, data }: CollegeSummaryTableProps) {
+  const { selectedCollege, selectedDepartment, setSelectedCollege, setSelectedDepartment } = useDashboard()
 
   const handleCardClick = (name: string) => {
-    setSelectedCollege(name)
-    setSelectedDepartment(null)
+    if (!selectedCollege) {
+      setSelectedCollege(name)
+      setSelectedDepartment(null)
+    } else if (!selectedDepartment) {
+      setSelectedDepartment(name)
+    }
   }
 
   return (
-    <div className="space-y-4 mb-8">
-      {/* Title */}
-      <h3 className="text-[16px] font-extrabold text-blue-900 flex items-center gap-2 px-2">
-        <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
-        대학(원)별 강좌 분석 요약
-      </h3>
+    <div className="space-y-5">
+      <div className="flex items-center gap-3">
+        <span className="w-1.5 h-1.5 rounded-full inline-block shadow-[0_0_8px_rgba(100,180,255,0.6)]" style={{ background: "#64B4FF" }} />
+        <h3 className="text-[14px] font-semibold text-[var(--color-bone)]">{title}</h3>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        {data.map((row) => (
-          <div
-            key={row.name}
-            onClick={() => handleCardClick(row.name)}
-            className="group relative bg-white/60 backdrop-blur-md p-6 rounded-2xl shadow-[5px_5px_15px_rgba(0,75,155,0.05)] border border-white/60 hover:-translate-y-1 hover:shadow-[8px_8px_20px_rgba(0,75,155,0.12)] cursor-pointer transition-all duration-300 flex flex-col justify-between overflow-hidden"
-          >
-            {/* Hover Glow */}
-            <div className="absolute -right-10 -top-10 w-32 h-32 bg-blue-400/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500 pointer-events-none" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {data.map((row) => {
+          const accentColor = RANK_COLORS[(row.rank - 1) % RANK_COLORS.length]
+          const fillPct = Math.min(row.avgEnrollRate, 100)
 
-            <div className="relative z-10">
-              {/* College Name */}
-              <p className="text-[15px] font-extrabold text-blue-900 mb-3 tracking-tight">
-                {row.name}
-              </p>
-              
-              {/* Course count */}
-              <div className="flex items-baseline gap-1 mb-1">
-                <span className="text-[32px] font-extrabold tracking-tight text-blue-600 drop-shadow-sm">
+          return (
+            <div
+              key={row.name}
+              onClick={() => handleCardClick(row.name)}
+              className="glass-card relative p-5 cursor-pointer group overflow-hidden"
+            >
+              {/* Accent glow */}
+              <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-500 pointer-events-none"
+                style={{ background: `${accentColor}33` }} />
+              {/* Top shimmer */}
+              <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
+
+              {/* Rank badge */}
+              <div className="flex items-start justify-between mb-3 relative z-10">
+                <span className="text-[11px] font-bold font-geist px-2 py-0.5 rounded-full border"
+                  style={{ color: accentColor, borderColor: `${accentColor}44`, background: `${accentColor}18` }}>
+                  #{row.rank}
+                </span>
+                {!selectedDepartment && (
+                  <ArrowRight className="w-4 h-4 text-[var(--color-fog)] opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" />
+                )}
+              </div>
+
+              <p className="text-[15px] font-semibold text-[var(--color-bone)] mb-3 relative z-10 leading-tight">{row.name}</p>
+
+              <div className="flex items-baseline gap-1.5 mb-4 relative z-10">
+                <span className="text-[28px] font-light tracking-tight font-geist text-white text-glow-blue">
                   {row.courseCount.toLocaleString()}
                 </span>
-                <span className="text-[13px] font-bold text-blue-900/60">개 강좌</span>
+                <span className="text-[12px] font-medium" style={{ color: "rgba(255,255,255,0.5)" }}>개 강좌</span>
+              </div>
+
+              {/* Enrollment rate bar */}
+              <div className="relative z-10">
+                <div className="flex justify-between text-[11px] mb-1.5">
+                  <span style={{ color: "rgba(255,255,255,0.5)" }}>{row.totalEnrolled.toLocaleString()}명 수강</span>
+                  <span className="font-medium font-geist" style={{ color: accentColor }}>{row.avgEnrollRate.toFixed(1)}%</span>
+                </div>
+                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-full rounded-full transition-all duration-700"
+                    style={{ width: `${fillPct}%`, background: `linear-gradient(90deg, ${accentColor}88, ${accentColor})` }} />
+                </div>
               </div>
             </div>
-
-            {/* Enrolled Students + Avg Rate */}
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-blue-900/10 text-[13px] font-medium text-blue-800/80 relative z-10">
-              <span>수강인원: {row.totalEnrolled.toLocaleString()}명</span>
-              <span className="font-extrabold text-blue-900">수강률: {row.avgEnrollRate.toFixed(1)}%</span>
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

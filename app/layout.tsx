@@ -1,16 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Noto_Sans_KR } from "next/font/google";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import { DashboardFilterProvider } from "@/context/DashboardFilterContext";
 import "./globals.css";
-
-const notoFont = Noto_Sans_KR({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "700", "900"],
-  variable: "--font-noto-sans",
-});
 
 export const metadata: Metadata = {
   title: "INU 종합강의시간표 대시보드",
@@ -23,17 +16,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="h-full scroll-smooth antialiased">
-      <body className={`${notoFont.variable} font-sans bg-[#EBF1FA] text-blue-900 min-h-screen flex`}>
+    <html lang="ko" className="h-full scroll-smooth antialiased dark">
+      <body className="font-sans bg-[var(--color-void)] text-[var(--color-bone)] min-h-screen flex selection:bg-[var(--color-indigo-haze)] selection:text-white">
         <DashboardFilterProvider>
-          <div className="flex w-full min-h-screen">
-            <Suspense fallback={<div className="w-[220px] min-w-[220px] bg-white border-r border-[#E5E7EB]" />}>
+          {/* Left Sidebar Layout */}
+          <div className="flex w-full min-h-screen relative">
+            
+            {/* Sidebar Container */}
+            <Suspense fallback={<div className="w-[240px] min-w-[240px] bg-[var(--color-char)] border-r border-[var(--color-bone)]/10" />}>
               <Sidebar />
             </Suspense>
-            <div className="flex-1 flex flex-col min-h-screen overflow-auto pt-14 md:pt-0">
-              {children}
-              <Footer />
+
+          {/* Main Content Container */}
+          <div className="flex-1 flex flex-col min-h-screen overflow-auto relative z-10 px-6 md:px-10 pt-10 pb-24">
+            <div className="w-full max-w-[1200px] mx-auto flex flex-col gap-[var(--section-gap)]">
+                {children}
+                <Footer />
+              </div>
             </div>
+
           </div>
         </DashboardFilterProvider>
       </body>
