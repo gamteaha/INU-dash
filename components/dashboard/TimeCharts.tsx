@@ -2,13 +2,14 @@
 
 import { useEffect, useRef } from "react"
 import * as echarts from "echarts"
+import "echarts-gl"
 
 interface TimeChartsProps {
   dayData: { name: string; value: number }[]
   timeSlotData: { name: string; value: number }[]
 }
 
-const PALETTE = ["#5BC8F5", "#1A6EBF", "#A8D8F0", "#7B9EBF", "#3D7EAA", "#C8E8FF"]
+const PALETTE = ['#1A6EBF', '#2E8FD5', '#5BC8F5', '#A8D8F0']
 
 function Bar3DChart({
   data,
@@ -24,94 +25,85 @@ function Bar3DChart({
 
   useEffect(() => {
     if (!chartRef.current) return
+    
+    // Dispose before re-initializing if needed
+    if (instanceRef.current) {
+      instanceRef.current.dispose()
+    }
+
     const chart = echarts.init(chartRef.current, undefined, { renderer: "canvas" })
     instanceRef.current = chart
 
     const maxVal = Math.max(...data.map((d) => d.value)) || 1
 
-    const option: echarts.EChartsOption = {
-      backgroundColor: "transparent",
-      grid: {
-        top: 20,
-        right: 16,
-        bottom: 40,
-        left: 48,
-        containLabel: false,
-      },
-      tooltip: {
-        trigger: "axis",
-        axisPointer: { type: "none" },
+    const option = {
+      backgroundColor: 'transparent',
+      tooltip: { 
+        show: true,
         backgroundColor: "rgba(8,20,42,0.92)",
         borderColor: "rgba(100,180,255,0.35)",
         borderWidth: 1,
         textStyle: { color: "rgba(255,255,255,0.85)", fontSize: 13 },
-        formatter: (params: any) => {
-          const p = Array.isArray(params) ? params[0] : params
-          return `
-            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#5BC8F5;margin-right:6px"></span>
-            <b>${p.name}</b>&nbsp;&nbsp;
-            <span style="color:#A8D8F0;font-weight:700">${Number(p.value).toLocaleString()}개</span>
-          `
-        },
-        extraCssText: "border-radius:12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); padding: 10px 14px;",
+        extraCssText: "border-radius:12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); padding: 10px 14px;"
       },
-      xAxis: {
-        type: "category",
-        data: data.map((d) => d.name),
-        axisLine: { lineStyle: { color: "rgba(255,255,255,0.1)" } },
-        axisTick: { show: false },
-        axisLabel: {
-          color: "rgba(255,255,255,0.55)",
-          fontSize: 12,
-          fontFamily: "var(--font-sans, sans-serif)",
+      grid3D: {
+        boxWidth: 200,
+        boxDepth: 40,
+        boxHeight: 80,
+        viewControl: {
+          alpha: 25,        // 수직 기울기 (위에서 내려다보는 각도)
+          beta: 10,         // 수평 회전 각도
+          autoRotate: false,
+          rotateSensitivity: 0,  // 마우스로 회전 비활성화
+          zoomSensitivity: 0,    // 줌 비활성화
         },
-        splitLine: { show: false },
-      },
-      yAxis: {
-        type: "value",
-        splitLine: { lineStyle: { color: "rgba(255,255,255,0.05)", type: "dashed" } },
-        axisLine: { show: false },
-        axisTick: { show: false },
-        axisLabel: {
-          color: "rgba(255,255,255,0.35)",
-          fontSize: 11,
-          formatter: (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : `${v}`),
+        light: {
+          main: { intensity: 1.5, shadow: true },
+          ambient: { intensity: 0.4 }
         },
+        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+        axisLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 11 },
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
       },
-      series: [
-        {
-          type: "bar",
-          data: data.map((d, i) => ({
-            value: d.value,
-            itemStyle: {
-              color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
-                { offset: 0, color: "#1A6EBF" },
-                { offset: 0.6, color: "#3D7EAA" },
-                { offset: 1, color: "#5BC8F5" },
-              ]),
-              borderRadius: [6, 6, 0, 0],
-              shadowBlur: d.value === maxVal ? 16 : 0,
-              shadowColor: d.value === maxVal ? "rgba(91,200,245,0.5)" : "transparent",
-            },
-          })),
-          barWidth: "55%",
-          emphasis: {
-            itemStyle: {
-              color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
-                { offset: 0, color: "#1A6EBF" },
-                { offset: 1, color: "#C8E8FF" },
-              ]),
-              shadowBlur: 20,
-              shadowColor: "rgba(91,200,245,0.6)",
-            },
+      xAxis3D: {
+        type: 'category',
+        data: data.map(d => d.name),
+      },
+      yAxis3D: {
+        type: 'value',
+        name: '강좌 수',
+        nameTextStyle: { color: 'rgba(255,255,255,0.6)', fontSize: 11 },
+      },
+      zAxis3D: { type: 'value', show: false },
+      series: [{
+        type: 'bar3D',
+        data: data.map((d, idx) => [idx, d.value, 0]),
+        shading: 'lambert',   // 빛 반사로 입체감 표현
+        itemStyle: {
+          color: (params: any) => {
+            // 높이에 따라 색상 그라디언트
+            const ratio = params.data[1] / maxVal;
+            const idx = Math.min(Math.floor(ratio * (PALETTE.length - 1)), PALETTE.length - 1);
+            return PALETTE[idx];
           },
-          // 3D 느낌을 위한 그라디언트 사이드 패널 (pseudo-3D)
-          markPoint: {
-            symbol: "none",
-          },
+          opacity: 0.9,
         },
-      ],
-    }
+        emphasis: {
+          itemStyle: { color: '#C8E8FF', opacity: 1 }
+        },
+        barSize: 14,  // 육면체 굵기
+        tooltip: {
+          formatter: (params: any) => {
+            const categoryName = data[params.data[0]].name;
+            return `
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#5BC8F5;margin-right:6px"></span>
+              <b>${categoryName}</b><br/>
+              강좌 수: <span style="color:#A8D8F0;font-weight:700">${Number(params.data[1]).toLocaleString()}개</span>
+            `
+          }
+        }
+      }],
+    } as any
 
     chart.setOption(option)
 
@@ -138,22 +130,7 @@ function Bar3DChart({
         {title}
       </h3>
 
-      {/* 3D 기울기 효과 래퍼 */}
-      <div
-        style={{
-          perspective: "900px",
-          perspectiveOrigin: "50% 0%",
-        }}
-      >
-        <div
-          style={{
-            transform: "rotateX(8deg)",
-            transformStyle: "preserve-3d",
-          }}
-        >
-          <div ref={chartRef} style={{ width: "100%", height: "240px" }} />
-        </div>
-      </div>
+      <div ref={chartRef} style={{ width: "100%", height: "260px" }} />
     </div>
   )
 }
