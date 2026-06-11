@@ -78,7 +78,7 @@ export default function KpiCards({ totalCourses, totalCapacity, totalEnrolled, e
       <KpiCard id="kpi-total-enrolled" label="총 수강 인원" rawValue={totalEnrolled} unit="명" delta="전체 수강생 누적 합계"
         icon={Users} delay={160} accentColor="#5BC8F5" glowColor="rgba(91,200,245,0.4)" />
       <KpiCard id="kpi-english" label="원어 강의 비율" rawValue={englishRate} unit="%" delta={`${englishLecturesCount.toLocaleString()}개 원어 강좌`}
-        icon={Globe} delay={240} decimals={1} accentColor="#C8E8FF" glowColor="rgba(200,232,255,0.4)" />
+        icon={Globe} delay={240} decimals={1} accentColor="#F97316" glowColor="rgba(249,115,22,0.4)" />
     </div>
   )
 }

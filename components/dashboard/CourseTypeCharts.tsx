@@ -12,26 +12,47 @@ interface CourseTypeChartsProps {
 function DarkTooltip({ active, payload, suffix = "" }: any) {
   if (!active || !payload?.length) return null
   const { name, value } = payload[0].payload
+  const isGenEd = name.includes("교양")
+  const color = isGenEd ? "#F97316" : "#38BDF8"
+  const glowColor = isGenEd ? "rgba(249,115,22,0.4)" : "rgba(56,189,248,0.4)"
+
   return (
     <div className="px-4 py-3 rounded-xl text-[13px] font-medium border glass-card-elevated"
-      style={{ background: "rgba(13,27,42,0.95)", borderColor: "rgba(255,255,255,0.15)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
-      <p style={{ color: "rgba(255,255,255,0.6)" }} className="mb-0.5">{name}</p>
-      <p className="text-[var(--color-paper)] font-geist text-glow-blue">{typeof value === "number" ? value.toLocaleString() : value}{suffix}</p>
+      style={{ background: "rgba(8,20,42,0.92)", borderColor: glowColor, boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
+      <div className="flex items-center gap-2 mb-1">
+        <span className="w-2 h-2 rounded-full shadow-md" style={{ background: color, boxShadow: `0 0 8px ${color}` }}></span>
+        <p style={{ color: "rgba(255,255,255,0.85)" }} className="mb-0">{name}</p>
+      </div>
+      <p className="text-[var(--color-paper)] font-geist text-[14px] mt-1 pl-4" style={{ color }}>
+        <span className="font-bold">{typeof value === "number" ? value.toLocaleString() : value}</span>
+        <span className="text-[12px] ml-1" style={{ color: "rgba(255,255,255,0.6)" }}>{suffix}</span>
+      </p>
     </div>
   )
 }
 
 function GradientBar(props: any) {
-  const { x, y, width, height, index, maxIdx } = props
-  const isMax = index === maxIdx
+  const { x, y, width, height, payload } = props
+  const isGenEd = payload.name.includes("교양")
+  const gradientUrl = isGenEd ? "url(#barGradientOrange)" : "url(#barGradientBlue)"
+  
+  // y가 NaN이거나 height가 음수인 경우 에러 방지
+  if (typeof y !== 'number' || typeof height !== 'number' || height < 0) return null;
+
   return (
     <rect
       x={x} y={y} width={width} height={height}
       rx={6} ry={6}
-      fill={isMax ? "url(#barGradientHighlight)" : "url(#barGradientBase)"}
+      fill={gradientUrl}
       style={{ transition: "all 0.3s ease" }}
     />
   )
+}
+
+function CustomActiveBar(props: any) {
+  const { payload } = props
+  const isGenEd = payload?.name?.includes("교양")
+  return <Rectangle {...props} fill={isGenEd ? "url(#barGradientOrangeActive)" : "url(#barGradientBlueActive)"} filter="brightness(1.15)" />
 }
 
 function ChartCard({ title, children, delay = 0 }: { title: string; children: React.ReactNode; delay?: number }) {
@@ -48,61 +69,69 @@ function ChartCard({ title, children, delay = 0 }: { title: string; children: Re
   )
 }
 
-export default function CourseTypeCharts({ byCourseTypeCount, byCourseTypeAvgEnroll }: CourseTypeChartsProps) {
-  const maxCountIdx = byCourseTypeCount.reduce((mi, v, i, a) => v.value > a[mi].value ? i : mi, 0)
-  const maxAvgIdx = byCourseTypeAvgEnroll.reduce((mi, v, i, a) => v.value > a[mi].value ? i : mi, 0)
+function ChartDefs() {
+  return (
+    <defs>
+      {/* 인천대 블루 칩 그라데이션 */}
+      <linearGradient id="barGradientBlue" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stopColor="#004B9B" />
+        <stop offset="100%" stopColor="#38BDF8" />
+      </linearGradient>
+      <linearGradient id="barGradientBlueActive" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stopColor="#0056B3" />
+        <stop offset="100%" stopColor="#7DD3FC" />
+      </linearGradient>
+      
+      {/* 횃불이 오렌지 칩 그라데이션 */}
+      <linearGradient id="barGradientOrange" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stopColor="#C2410C" />
+        <stop offset="100%" stopColor="#FDBA74" />
+      </linearGradient>
+      <linearGradient id="barGradientOrangeActive" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stopColor="#EA580C" />
+        <stop offset="100%" stopColor="#FED7AA" />
+      </linearGradient>
+    </defs>
+  )
+}
 
+export default function CourseTypeCharts({ byCourseTypeCount, byCourseTypeAvgEnroll }: CourseTypeChartsProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
       <ChartCard title="이수구분별 강좌 수" delay={150}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={byCourseTypeCount} margin={{ top: 10, right: 10, left: 0, bottom: 20 }} barSize={14}>
-            <defs>
-              <linearGradient id="barGradientBase" x1="0" y1="1" x2="0" y2="0">
-                <stop offset="0%" stopColor="#1E3656" />
-                <stop offset="100%" stopColor="#2E4A70" />
-              </linearGradient>
-              <linearGradient id="barGradientHighlight" x1="0" y1="1" x2="0" y2="0">
-                <stop offset="0%" stopColor="#1A6EBF" />
-                <stop offset="100%" stopColor="#5BC8F5" />
-              </linearGradient>
-              <linearGradient id="barGradientActive" x1="0" y1="1" x2="0" y2="0">
-                <stop offset="0%" stopColor="#2A7EDF" />
-                <stop offset="100%" stopColor="#7CDDFF" />
-              </linearGradient>
-            </defs>
+          <BarChart data={byCourseTypeCount} margin={{ top: 10, right: 10, left: 0, bottom: 20 }} barSize={16}>
+            <ChartDefs />
             <XAxis dataKey="name" axisLine={false} tickLine={false}
-              tick={{ fontSize: 11, fill: "rgba(255,255,255,0.5)", fontFamily: "var(--font-sans)" }} dy={10} />
+              tick={{ fontSize: 11, fill: "rgba(255,255,255,0.6)", fontFamily: "var(--font-sans)" }} dy={10} />
             <YAxis axisLine={false} tickLine={false}
-              tick={{ fontSize: 11, fill: "rgba(255,255,255,0.5)" }} dx={-8} />
+              tick={{ fontSize: 11, fill: "rgba(255,255,255,0.4)" }} dx={-8} />
             <Tooltip content={<DarkTooltip suffix="개" />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
-            <Bar dataKey="value" shape={(props: any) => <GradientBar {...props} maxIdx={maxCountIdx} />} radius={[6,6,0,0]} activeBar={<Rectangle fill="url(#barGradientActive)" filter="brightness(1.1)" />} />
+            <Bar dataKey="value" shape={<GradientBar />} activeBar={<CustomActiveBar />} />
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
 
       <ChartCard title="이수구분별 평균 수강인원" delay={250}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={byCourseTypeAvgEnroll} margin={{ top: 10, right: 10, left: 0, bottom: 20 }} barSize={14}>
-            <defs>
-              <linearGradient id="barGradientBase2" x1="0" y1="1" x2="0" y2="0">
-                <stop offset="0%" stopColor="#1E3656" />
-                <stop offset="100%" stopColor="#2E4A70" />
-              </linearGradient>
-              <linearGradient id="barGradientHighlight2" x1="0" y1="1" x2="0" y2="0">
-                <stop offset="0%" stopColor="#1A6EBF" />
-                <stop offset="100%" stopColor="#5BC8F5" />
-              </linearGradient>
-            </defs>
+          <BarChart data={byCourseTypeAvgEnroll} margin={{ top: 10, right: 10, left: 0, bottom: 20 }} barSize={16}>
+            <ChartDefs />
             <XAxis dataKey="name" axisLine={false} tickLine={false}
-              tick={{ fontSize: 11, fill: "rgba(255,255,255,0.5)", fontFamily: "var(--font-sans)" }} dy={10} />
+              tick={{ fontSize: 11, fill: "rgba(255,255,255,0.6)", fontFamily: "var(--font-sans)" }} dy={10} />
             <YAxis axisLine={false} tickLine={false}
-              tick={{ fontSize: 11, fill: "rgba(255,255,255,0.5)" }} dx={-8} />
+              tick={{ fontSize: 11, fill: "rgba(255,255,255,0.4)" }} dx={-8} />
             <Tooltip content={<DarkTooltip suffix="명" />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
-            <Bar dataKey="value" radius={[6,6,0,0]} activeBar={<Rectangle fill="url(#barGradientActive)" filter="brightness(1.1)" />}>
-              {byCourseTypeAvgEnroll.map((_, index) => (
-                <Cell key={index} fill={index === maxAvgIdx ? "url(#barGradientHighlight2)" : "url(#barGradientBase2)"} style={{ transition: "all 0.3s ease" }} />
-              ))}
+            <Bar dataKey="value" radius={[6,6,0,0]} activeBar={<CustomActiveBar />}>
+              {byCourseTypeAvgEnroll.map((entry, index) => {
+                const isGenEd = entry.name.includes("교양")
+                return (
+                  <Cell 
+                    key={index} 
+                    fill={isGenEd ? "url(#barGradientOrange)" : "url(#barGradientBlue)"} 
+                    style={{ transition: "all 0.3s ease" }} 
+                  />
+                )
+              })}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
