@@ -44,7 +44,7 @@ export default function CampusMap() {
   const mapRef = useRef<HTMLDivElement>(null)
   const [isLoaded, setIsLoaded] = useState(false)
   const [mapInstance, setMapInstance] = useState<any>(null)
-  const [mapTypeId, setMapTypeId] = useState<"ROADMAP" | "SKYVIEW">("ROADMAP")
+  const [mapTypeId, setMapTypeId] = useState<"ROADMAP" | "SKYVIEW">("SKYVIEW")
 
   const { allCourses, setSelectedCollege } = useDashboardFilter()
   const [selectedBuilding, setSelectedBuilding] = useState<string | null>(null)
