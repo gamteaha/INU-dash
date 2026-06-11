@@ -9,6 +9,7 @@ import DistributionCharts from "@/components/dashboard/DistributionCharts"
 import TimeCharts from "@/components/dashboard/TimeCharts"
 import CollegeSummaryTable from "@/components/dashboard/CollegeSummaryTable"
 import CourseDetailTable from "@/components/dashboard/CourseDetailTable"
+import CampusMap from "@/components/CampusMap"
 import PageHeader from "@/components/PageHeader"
 import AiAnalysisModal from "@/components/AiAnalysisModal"
 import { Loader2, X } from "lucide-react"
@@ -339,6 +340,9 @@ export default function DashboardPage() {
           {!selectedDepartment && (
             <CollegeSummaryTable data={aggregated.collegeSummary} />
           )}
+
+          {/* 캠퍼스 강좌 분포 지도 */}
+          <CampusMap />
 
           {/* 상세 강좌 정보 테이블 */}
           <CourseDetailTable courses={filteredCourses} />
