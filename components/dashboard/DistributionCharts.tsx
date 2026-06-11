@@ -42,11 +42,10 @@ function Pie3DChart({
     // 데이터에 isMax 등 추가 정보 매핑
     const mappedData = data.map((d, i) => {
       const isMax = d.value === maxVal && maxVal > 0
-      const pointColorLight = blue[1]
-      const pointColorDark = orange[1]
-      const pointColorDarkerLight = blue[2]
-      const pointColorDarkerDark = orange[2]
-      
+      const sliceColor = isMax
+        ? (isLight ? blue[1] : orange[1])  // 최댓값: 포인트 컬러
+        : PALETTE[i % PALETTE.length]       // 나머지: 팔레트
+
       return {
         name: d.name,
         value: d.value,
@@ -54,15 +53,15 @@ function Pie3DChart({
         itemStyle: {
           color: isMax
             ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: isLight ? pointColorLight : pointColorDark }, // 포인트 하이라이트
-                { offset: 1, color: isLight ? pointColorDarkerLight : pointColorDarkerDark },
+                { offset: 0, color: isLight ? blue[1] : orange[1] },
+                { offset: 1, color: isLight ? blue[2] : orange[2] },
               ])
             : new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 { offset: 0, color: PALETTE[i % PALETTE.length] },
                 { offset: 1, color: PALETTE[(i + 1) % PALETTE.length] + "bb" },
               ]),
         },
-        originalColor: isMax ? (isLight ? pointColorLight : pointColorDark) : PALETTE[i % PALETTE.length]
+        originalColor: sliceColor  // ← 범례와 동일한 색 기준
       }
     })
 
@@ -185,22 +184,7 @@ function Pie3DChart({
         </div>
       </div>
 
-      {/* 커스텀 범례 */}
-      <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
-        {data.map((d, index) => {
-          const mappedItem = {
-            originalColor: d.value === Math.max(...data.map(v => v.value)) && d.value > 0
-              ? (colors.isLight ? colors.blue[1] : colors.orange[1])
-              : (colors.isLight ? [colors.blue[0], colors.orange[0], colors.blue[2], colors.orange[2], colors.blue[4], colors.orange[4]][index % 6] : [colors.blue[1], colors.orange[1], colors.blue[3], colors.orange[3], colors.blue[5], colors.orange[5]][index % 6])
-          }
-          return (
-            <div key={index} className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.3)]" style={{ background: mappedItem.originalColor }} />
-              <span className="text-[12px] whitespace-nowrap" style={{ color: colors.isLight ? '#4a5568' : 'rgba(255,255,255,0.7)' }}>{d.name}</span>
-            </div>
-          )
-        })}
-      </div>
+
     </div>
   )
 }
