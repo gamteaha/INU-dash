@@ -25,10 +25,12 @@ const buildings = [
   { name: "사회과학대학",       lat: 37.3751448, lng: 126.6325671, college: "사회과학대학" },
   // 15호관 — 인문대학 (Google Maps 실측)
   { name: "인문대학",           lat: 37.3754641, lng: 126.6319879, college: "인문대학" },
-  // 14호관 — 글로벌경영대학 (경영대학 Google Maps 실측)
-  { name: "글로벌경영대학",     lat: 37.3761287, lng: 126.6326264, college: "글로벌경영대학" },
+  // 14호관 — 경영대학 (Google Maps 실측)
+  { name: "경영대학",         lat: 37.3761287, lng: 126.6326264, college: "경영대학" },
+  // 13호관 — 글로벌정경대학 (경영대학 서쪽)
+  { name: "글로벌정경대학",   lat: 37.3759,    lng: 126.6320,    college: "글로벌정경대학" },
   // 16호관 — 예술체육대학 (조금 더 남쪽)
-  { name: "예술체육대학",       lat: 37.3749,    lng: 126.6309,    college: "예술체육학부" },
+  { name: "예술체육대학",       lat: 37.3749,    lng: 126.6309,    college: "예술체육대학" },
 ]
 
 export default function CampusMap() {
