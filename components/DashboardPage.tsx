@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { useDashboard } from "@/context/DashboardFilterContext"
 import {
   processKpiStats,
@@ -95,7 +96,15 @@ export default function DashboardPage() {
       {isLoading ? (
         <DashboardSkeleton />
       ) : (
-        <div className="flex flex-col gap-[80px]">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${selectedCollege ?? "all"}-${selectedDepartment ?? "none"}`}
+            className="flex flex-col gap-[80px]"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+          >
 
           {/* Hero Banner */}
           <MascotBanner />
@@ -135,7 +144,8 @@ export default function DashboardPage() {
             <CollegeSummaryTable title={summaryTitle} data={dynamicSummary} />
             <CourseDetailTable courses={filteredCourses} />
           </div>
-        </div>
+          </motion.div>
+        </AnimatePresence>
       )}
 
       {/* AI 강의 분석 모달 */}

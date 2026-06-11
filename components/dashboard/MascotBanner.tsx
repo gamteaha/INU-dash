@@ -4,6 +4,7 @@ import { useDashboard } from "@/context/DashboardFilterContext"
 import { COLLEGE_HIERARCHY, DEPARTMENT_LINKS, DEPARTMENT_IMAGES } from "@/lib/supabase/constants"
 import Image from "next/image"
 import { ExternalLink } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 export default function MascotBanner() {
   const { selectedCollege, selectedDepartment, setSelectedDepartment, setSelectedCollege } = useDashboard()
@@ -80,10 +81,30 @@ export default function MascotBanner() {
             >
               Course Intelligence.
             </span>
-            <h1 className="text-[40px] font-medium tracking-[-0.02em] leading-[1.2] text-white text-balance font-geist">
-              {getHeadline()}
-            </h1>
-            <p className="text-[16px] text-[var(--color-mist)] mt-1">{getSubtitle()}</p>
+            <AnimatePresence mode="wait">
+              <motion.h1
+                key={getHeadline()}
+                className="text-[40px] font-medium tracking-[-0.02em] leading-[1.2] text-white text-balance font-geist"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
+              >
+                {getHeadline()}
+              </motion.h1>
+            </AnimatePresence>
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={getSubtitle()}
+                className="text-[16px] text-[var(--color-mist)] mt-1"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {getSubtitle()}
+              </motion.p>
+            </AnimatePresence>
           </div>
 
           {/* Feature List */}
@@ -141,8 +162,8 @@ export default function MascotBanner() {
                   : DEPARTMENT_IMAGES[item] ?? null
                 const hasLink = !isCollegeView && !!DEPARTMENT_LINKS[item]
 
-                return (
-                  <div
+              return (
+                  <motion.div
                     key={item}
                     className={`group relative flex flex-col items-center gap-2 rounded-[14px] p-2.5 cursor-pointer transition-all duration-200 ${
                       isActive
@@ -150,6 +171,10 @@ export default function MascotBanner() {
                         : "border border-transparent hover:bg-[var(--color-iron)]/40 hover:border-[var(--color-bone)]/10"
                     }`}
                     onClick={() => handleDockItemClick(item)}
+                    initial={{ opacity: 0, scale: 0.88, y: 8 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
+                    whileHover={{ y: -2, transition: { duration: 0.15 } }}
                   >
                     {/* Image or Placeholder */}
                     <div className={`relative w-full aspect-square rounded-[10px] overflow-hidden border transition-all ${
@@ -191,7 +216,7 @@ export default function MascotBanner() {
                     }`}>
                       {item}
                     </span>
-                  </div>
+                  </motion.div>
                 )
               })}
             </div>

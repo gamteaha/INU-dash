@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import * as echarts from "echarts"
+import { motion } from "framer-motion"
 
 interface TimeChartsProps {
   dayData: { name: string; value: number }[]
@@ -185,9 +186,11 @@ function IsometricBarChart({
   }, [data])
 
   return (
-    <div
+    <motion.div
       className="glass-card relative p-6 min-w-0 group"
-      style={{ animation: `cardEnter 400ms ease-out ${delay}ms both` }}
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, delay: delay / 1000, ease: [0.25, 1, 0.5, 1] }}
     >
       <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
       <h3 className="text-[14px] font-semibold text-[var(--color-bone)] mb-4 flex items-center gap-2">
@@ -199,7 +202,7 @@ function IsometricBarChart({
       </h3>
 
       <div ref={chartRef} style={{ width: "100%", height: "260px" }} />
-    </div>
+    </motion.div>
   )
 }
 

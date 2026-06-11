@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { X, Download, Sparkles, Loader2 } from "lucide-react"
 import ReactMarkdown from "react-markdown"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface AiAnalysisModalProps {
   isOpen: boolean
@@ -82,20 +83,29 @@ export default function AiAnalysisModal({
     URL.revokeObjectURL(url)
   }
 
-  if (!isOpen) return null
-
   const isGenerating = isLoading || (!completion && !error)
 
   return (
+    <AnimatePresence>
+      {isOpen && (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-[var(--color-void)]/70 backdrop-blur-sm transition-opacity"
+      <motion.div
+        className="absolute inset-0 bg-[var(--color-void)]/70 backdrop-blur-sm"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         onClick={!isLoading ? onClose : undefined}
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-[640px] bg-[var(--color-char)]/95 backdrop-blur-[24px] rounded-[var(--radius-cards)] border border-[var(--color-bone)]/10 shadow-[0_24px_48px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in slide-in-from-bottom-4 duration-200">
+      <motion.div
+        className="relative w-full max-w-[640px] bg-[var(--color-char)]/95 backdrop-blur-[24px] rounded-[var(--radius-cards)] border border-[var(--color-bone)]/10 shadow-[0_24px_48px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] overflow-hidden flex flex-col max-h-[90vh]"
+        initial={{ opacity: 0, scale: 0.95, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 8 }}
+        transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
+      >
         
         {/* Header */}
         <div className="px-6 py-4 border-b border-[var(--color-bone)]/10 flex items-center justify-between shrink-0">
@@ -178,7 +188,9 @@ export default function AiAnalysisModal({
             보고서 다운로드 (.md)
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
+      )}
+    </AnimatePresence>
   )
 }
