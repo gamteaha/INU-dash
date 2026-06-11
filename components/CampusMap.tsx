@@ -36,6 +36,8 @@ const buildings = [
   { name: "예술체육대학",       lat: 37.3749,    lng: 126.6309,    college: "예술체육대학" },
   // 융합자유전공대학 (예술체육대학보다 조금 더 서쪽)
   { name: "융합자유전공대학",   lat: 37.3749,    lng: 126.6303,    college: "융합자유전공대학" },
+  // 미추홀캠퍼스 — 사범대학
+  { name: "사범대학",           lat: 37.381588,  lng: 126.6542564, college: "사범대학" },
 ]
 
 export default function CampusMap() {
