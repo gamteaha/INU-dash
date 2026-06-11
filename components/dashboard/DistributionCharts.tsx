@@ -99,7 +99,7 @@ function DonutCard({
       <div className="flex flex-col sm:flex-row items-center gap-6">
         {/* Donut */}
         <div className="relative shrink-0 w-[160px] h-[160px] min-w-0">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={160} minHeight={160}>
             <PieChart>
               <Pie
                 data={data}

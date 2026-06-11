@@ -91,7 +91,7 @@ export default function TimeCharts({
       {/* Chart 1: 요일별 수업 강좌 수 */}
       <ChartCard title="요일별 수업 강좌 수" delay={640}>
         <div className="h-[300px] min-w-0">
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={300} minHeight={300}>
             <BarChart
               data={dayData}
               layout="vertical"
@@ -133,7 +133,7 @@ export default function TimeCharts({
       {/* Chart 2: 수업 시간별 강좌 수 */}
       <ChartCard title="수업 시간별 강좌 수" delay={720}>
         <div className="h-[300px] min-w-0">
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={300} minHeight={300}>
             <BarChart
               data={timeSlotData}
               layout="vertical"

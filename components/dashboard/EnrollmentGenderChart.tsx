@@ -29,7 +29,7 @@ export default function EnrollmentGenderChart({ maleCount, femaleCount }: Enroll
 
       <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-6">
         <div className="w-full sm:w-1/2 h-[220px] relative">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={300} minHeight={300}>
             <PieChart>
               <Pie
                 data={data}

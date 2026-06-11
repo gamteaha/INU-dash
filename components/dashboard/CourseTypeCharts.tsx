@@ -78,7 +78,7 @@ export default function CourseTypeCharts({
       {/* Chart 1 — 이수구분별 강좌 수 */}
       <ChartCard title="이수구분별 강좌 수" delay={320}>
         <div style={{ height: chartHeight, minWidth: 0 }}>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={300} minHeight={300}>
             <BarChart
               data={sortedCount}
               layout="vertical"
@@ -121,7 +121,7 @@ export default function CourseTypeCharts({
       {/* Chart 2 — 이수구분별 평균 수강인원 */}
       <ChartCard title="이수구분별 평균 수강인원" delay={400}>
         <div style={{ height: chartHeight, minWidth: 0 }}>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={300} minHeight={300}>
             <BarChart
               data={sortedAvg}
               layout="vertical"

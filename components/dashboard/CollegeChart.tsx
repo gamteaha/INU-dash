@@ -40,7 +40,7 @@ export default function CollegeChart({ data, title = "단과대학별 개설 강
       </div>
 
       <div className="flex-1 w-full min-h-[250px]">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height={300} minHeight={300}>
           <BarChart
             data={sortedData}
             margin={{ top: 10, right: 10, left: -20, bottom: 20 }}

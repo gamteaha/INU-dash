@@ -34,7 +34,7 @@ export default function CourseTypeChart({
           <h3 className="text-sm font-bold text-[#1A1D23]">이수구분별 강좌 수</h3>
         </div>
         <div className="h-[260px]">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={300} minHeight={300}>
             <BarChart
               data={sortedCount}
               layout="vertical"
@@ -75,7 +75,7 @@ export default function CourseTypeChart({
           <h3 className="text-sm font-bold text-[#1A1D23]">이수구분별 평균 수강인원</h3>
         </div>
         <div className="h-[260px]">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={300} minHeight={300}>
             <BarChart
               data={sortedAvg}
               layout="vertical"
