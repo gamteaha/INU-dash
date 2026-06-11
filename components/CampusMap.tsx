@@ -12,14 +12,14 @@ declare global {
 }
 
 const buildings = [
-  { name: "공과대학",       lat: 37.3728, lng: 126.6318, college: "공과대학" },
-  { name: "정보기술대학",   lat: 37.3735, lng: 126.6325, college: "정보기술대학" },
-  { name: "자연과학대학",   lat: 37.3742, lng: 126.6340, college: "자연과학대학" },
-  { name: "인문대학",       lat: 37.3748, lng: 126.6315, college: "인문대학" },
-  { name: "사회과학대학",   lat: 37.3750, lng: 126.6322, college: "사회과학대학" },
-  { name: "글로벌경영대학", lat: 37.3755, lng: 126.6330, college: "글로벌경영대학" },
-  { name: "도시과학대학",   lat: 37.3720, lng: 126.6310, college: "도시과학대학" },
-  { name: "예술체육대학",   lat: 37.3760, lng: 126.6308, college: "예술체육학부" },
+  { name: "공과대학",         lat: 37.3726, lng: 126.6304, college: "공과대학" },
+  { name: "정보기술대학",     lat: 37.3733, lng: 126.6314, college: "정보기술대학" },
+  { name: "자연과학대학",     lat: 37.3742, lng: 126.6328, college: "자연과학대학" },
+  { name: "인문대학",         lat: 37.3748, lng: 126.6308, college: "인문대학" },
+  { name: "사회과학대학",     lat: 37.3752, lng: 126.6318, college: "사회과학대학" },
+  { name: "글로벌경영대학",   lat: 37.3756, lng: 126.6325, college: "글로벌경영대학" },
+  { name: "도시과학대학",     lat: 37.3720, lng: 126.6298, college: "도시과학대학" },
+  { name: "예술체육대학",     lat: 37.3762, lng: 126.6300, college: "예술체육학부" },
 ]
 
 export default function CampusMap() {
