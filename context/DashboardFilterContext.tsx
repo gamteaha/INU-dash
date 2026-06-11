@@ -46,6 +46,7 @@ interface DashboardFilterContextValue {
   selectedDepartment: string | null
   setSelectedCollege: (college: string | null) => void
   setSelectedDepartment: (dept: string | null) => void
+  setCollegeAndDepartment: (college: string, dept: string) => void  // atomic
   filterLabel: string
 
   // Data
@@ -196,6 +197,12 @@ export function DashboardFilterProvider({ children }: { children: ReactNode }) {
     setSelectedDepartmentState(dept)
   }, [])
 
+  // Atomic: college + dept 동시 설정 (dept 클릭 시 college 리셋 방지)
+  const setCollegeAndDepartment = useCallback((college: string, dept: string) => {
+    setSelectedCollegeState(college)
+    setSelectedDepartmentState(dept)
+  }, [])
+
   const filterLabel = selectedDepartment ?? selectedCollege ?? "대학전체"
 
   return (
@@ -205,6 +212,7 @@ export function DashboardFilterProvider({ children }: { children: ReactNode }) {
         selectedDepartment,
         setSelectedCollege,
         setSelectedDepartment,
+        setCollegeAndDepartment,
         filterLabel,
         allCourses,
         filteredCourses,

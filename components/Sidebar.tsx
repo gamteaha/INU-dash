@@ -11,6 +11,7 @@ export default function Sidebar() {
     selectedDepartment,
     setSelectedCollege,
     setSelectedDepartment,
+    setCollegeAndDepartment,
     departmentsByCollege,
   } = useDashboard()
 
@@ -153,7 +154,15 @@ export default function Sidebar() {
                           )}
 
                           <button
-                            onClick={() => setSelectedDepartment(isDeptSelected ? null : dept)}
+                            onClick={() => {
+                              if (isDeptSelected) {
+                                // 학과 선택 해제 → 대학 레벨로 복귀
+                                setSelectedDepartment(null)
+                              } else {
+                                // atomic: college + dept 동시 설정 (순서 꼬임 방지)
+                                setCollegeAndDepartment(collegeName, dept)
+                              }
+                            }}
                             className="flex-1 text-left px-2 py-1.5 text-[12px] transition-colors"
                             style={{ color: isDeptSelected ? "var(--color-bone)" : "rgba(255,255,255,0.5)" }}
                           >
