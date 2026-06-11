@@ -12,14 +12,15 @@ declare global {
 }
 
 const buildings = [
-  { name: "공과대학",         lat: 37.3726, lng: 126.6304, college: "공과대학" },
-  { name: "정보기술대학",     lat: 37.3733, lng: 126.6314, college: "정보기술대학" },
-  { name: "자연과학대학",     lat: 37.3742, lng: 126.6328, college: "자연과학대학" },
-  { name: "인문대학",         lat: 37.3748, lng: 126.6308, college: "인문대학" },
-  { name: "사회과학대학",     lat: 37.3752, lng: 126.6318, college: "사회과학대학" },
-  { name: "글로벌경영대학",   lat: 37.3756, lng: 126.6325, college: "글로벌경영대학" },
-  { name: "도시과학대학",     lat: 37.3720, lng: 126.6298, college: "도시과학대학" },
-  { name: "예술체육대학",     lat: 37.3762, lng: 126.6300, college: "예술체육학부" },
+  { name: "공과대학", lat: 37.3726, lng: 126.6304, college: "공과대학" },
+  { name: "정보기술대학", lat: 37.3733, lng: 126.6314, college: "정보기술대학" },
+  { name: "자연과학대학", lat: 37.3742, lng: 126.6328, college: "자연과학대학" },
+  { name: "생명과학기술대학", lat: 37.3745, lng: 126.6332, college: "생명과학기술대학" },
+  { name: "인문대학", lat: 37.3748, lng: 126.6308, college: "인문대학" },
+  { name: "사회과학대학", lat: 37.3752, lng: 126.6318, college: "사회과학대학" },
+  { name: "글로벌경영대학", lat: 37.3756, lng: 126.6325, college: "글로벌경영대학" },
+  { name: "도시과학대학", lat: 37.3720, lng: 126.6298, college: "도시과학대학" },
+  { name: "예술체육대학", lat: 37.3762, lng: 126.6300, college: "예술체육학부" },
 ]
 
 export default function CampusMap() {
@@ -27,10 +28,10 @@ export default function CampusMap() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [mapInstance, setMapInstance] = useState<any>(null)
   const [mapTypeId, setMapTypeId] = useState<"ROADMAP" | "SKYVIEW">("ROADMAP")
-  
+
   const { allCourses, setSelectedCollege } = useDashboardFilter()
   const [selectedBuilding, setSelectedBuilding] = useState<string | null>(null)
-  
+
   const overlaysRef = useRef<any[]>([])
 
   // Load Script & Init Map
@@ -75,7 +76,7 @@ export default function CampusMap() {
   // Update MapType
   useEffect(() => {
     if (mapInstance && window.kakao) {
-       mapInstance.setMapTypeId(window.kakao.maps.MapTypeId[mapTypeId])
+      mapInstance.setMapTypeId(window.kakao.maps.MapTypeId[mapTypeId])
     }
   }, [mapInstance, mapTypeId])
 
@@ -124,7 +125,7 @@ export default function CampusMap() {
       const content = document.createElement("div")
       content.className = "relative flex flex-col items-center justify-center"
       content.style.fontFamily = "var(--font-body)"
-      
+
       // Bubble
       const bubble = document.createElement("div")
       bubble.style.width = `${size}px`
@@ -141,7 +142,7 @@ export default function CampusMap() {
       bubble.style.transition = "transform 0.18s"
       bubble.style.userSelect = "none"
       bubble.style.transform = "scale(1)"
-      
+
       bubble.onmouseenter = () => bubble.style.transform = "scale(1.15)"
       bubble.onmouseleave = () => bubble.style.transform = "scale(1)"
       bubble.onclick = (e) => {
@@ -160,7 +161,7 @@ export default function CampusMap() {
         const popup = document.createElement("div")
         popup.className = "absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-white rounded-[10px] shadow-[0_4px_16px_rgba(0,0,0,0.12)] p-4 min-w-[180px] pointer-events-auto z-[30]"
         popup.onclick = (e) => e.stopPropagation()
-        
+
         popup.innerHTML = `
           <div class="flex items-center justify-between mb-2">
             <span class="text-[14px] font-semibold text-[#202020]">${building.college}</span>
@@ -225,7 +226,7 @@ export default function CampusMap() {
 
       <div className="relative w-full h-[500px] rounded-lg overflow-hidden bg-[var(--color-fog)] border border-[var(--color-chalk)]">
         <div ref={mapRef} style={{ width: "100%", height: "100%" }} />
-        
+
         {!isLoaded && (
           <div className="absolute inset-0 flex items-center justify-center bg-[#f5f5f5]">
             <p className="text-[14px] text-[var(--color-slate)] animate-pulse">지도 로딩 중...</p>
@@ -236,17 +237,15 @@ export default function CampusMap() {
           <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
             <button
               onClick={() => setMapTypeId("SKYVIEW")}
-              className={`bg-white border border-[#e8e8e8] rounded-lg px-3.5 py-2 text-[12px] font-medium cursor-pointer shadow-[0_1px_4px_rgba(0,0,0,0.08)] transition-colors hover:bg-[#f5f5f5] ${
-                mapTypeId === "SKYVIEW" ? "text-[#ff682c] border-[#ff682c]" : "text-[#202020]"
-              }`}
+              className={`bg-white border border-[#e8e8e8] rounded-lg px-3.5 py-2 text-[12px] font-medium cursor-pointer shadow-[0_1px_4px_rgba(0,0,0,0.08)] transition-colors hover:bg-[#f5f5f5] ${mapTypeId === "SKYVIEW" ? "text-[#ff682c] border-[#ff682c]" : "text-[#202020]"
+                }`}
             >
               🛰 위성뷰
             </button>
             <button
               onClick={() => setMapTypeId("ROADMAP")}
-              className={`bg-white border border-[#e8e8e8] rounded-lg px-3.5 py-2 text-[12px] font-medium cursor-pointer shadow-[0_1px_4px_rgba(0,0,0,0.08)] transition-colors hover:bg-[#f5f5f5] ${
-                mapTypeId === "ROADMAP" ? "text-[#ff682c] border-[#ff682c]" : "text-[#202020]"
-              }`}
+              className={`bg-white border border-[#e8e8e8] rounded-lg px-3.5 py-2 text-[12px] font-medium cursor-pointer shadow-[0_1px_4px_rgba(0,0,0,0.08)] transition-colors hover:bg-[#f5f5f5] ${mapTypeId === "ROADMAP" ? "text-[#ff682c] border-[#ff682c]" : "text-[#202020]"
+                }`}
             >
               🗺 지도뷰
             </button>
