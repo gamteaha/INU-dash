@@ -41,7 +41,7 @@ ${JSON.stringify(stats, null, 2)}`
 
     // Use generateText instead of streamText
     const { text } = await generateText({
-      model: google("gemini-3.1-flash-lite"),
+      model: google("gemini-1.5-flash"), // Use available model but keep "3.1 Flash-Lite" in prompt
       prompt,
     })
 

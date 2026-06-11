@@ -26,7 +26,7 @@ export default function Footer() {
           </a>
           <span className="w-[1px] h-[12px] bg-[var(--color-smoke)]" />
           <a
-            href="https://elearning.inu.ac.kr"
+            href="https://cyber.inu.ac.kr"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[14px] font-medium text-[var(--color-mist)] hover:text-[var(--color-bone)] transition-colors"
