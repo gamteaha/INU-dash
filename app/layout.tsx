@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import { DashboardFilterProvider } from "@/context/DashboardFilterContext";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,9 +17,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="h-full scroll-smooth antialiased dark">
-      <body className="font-sans bg-[var(--color-void)] text-[var(--color-bone)] min-h-screen flex selection:bg-[var(--color-indigo-haze)] selection:text-white">
-        <DashboardFilterProvider>
+    <html lang="ko" className="h-full scroll-smooth antialiased" suppressHydrationWarning>
+      <body className="font-sans bg-[var(--color-void)] text-[var(--color-bone)] min-h-screen flex selection:bg-[var(--color-indigo-haze)] selection:text-white transition-colors duration-300">
+        <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange={false}>
+          <DashboardFilterProvider>
           {/* Left Sidebar Layout */}
           <div className="flex w-full min-h-screen relative">
             
@@ -36,7 +38,8 @@ export default function RootLayout({
             </div>
 
           </div>
-        </DashboardFilterProvider>
+          </DashboardFilterProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

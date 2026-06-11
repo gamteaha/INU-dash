@@ -3,6 +3,7 @@
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, Rectangle
 } from "recharts"
+import { useBrandColors } from "@/hooks/useBrandColors"
 
 interface CourseTypeChartsProps {
   byCourseTypeCount: { name: string; value: number }[]
@@ -10,22 +11,24 @@ interface CourseTypeChartsProps {
 }
 
 function DarkTooltip({ active, payload, suffix = "" }: any) {
+  const { blue, orange, isLight } = useBrandColors()
+  
   if (!active || !payload?.length) return null
   const { name, value } = payload[0].payload
   const isGenEd = name.includes("교양")
-  const color = isGenEd ? "#F97316" : "#38BDF8"
-  const glowColor = isGenEd ? "rgba(249,115,22,0.4)" : "rgba(56,189,248,0.4)"
+  const color = isGenEd ? orange[0] : blue[0]
+  const glowColor = isGenEd ? `${orange[0]}66` : `${blue[0]}66`
 
   return (
     <div className="px-4 py-3 rounded-xl text-[13px] font-medium border glass-card-elevated"
-      style={{ background: "rgba(8,20,42,0.92)", borderColor: glowColor, boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
+      style={{ background: isLight ? "rgba(255,255,255,0.95)" : "rgba(8,20,42,0.92)", borderColor: glowColor, boxShadow: "0 8px 32px rgba(0,0,0,0.2)" }}>
       <div className="flex items-center gap-2 mb-1">
         <span className="w-2 h-2 rounded-full shadow-md" style={{ background: color, boxShadow: `0 0 8px ${color}` }}></span>
-        <p style={{ color: "rgba(255,255,255,0.85)" }} className="mb-0">{name}</p>
+        <p style={{ color: isLight ? "#1a202c" : "rgba(255,255,255,0.85)" }} className="mb-0">{name}</p>
       </div>
-      <p className="text-[var(--color-paper)] font-geist text-[14px] mt-1 pl-4" style={{ color }}>
-        <span className="font-bold">{typeof value === "number" ? value.toLocaleString() : value}</span>
-        <span className="text-[12px] ml-1" style={{ color: "rgba(255,255,255,0.6)" }}>{suffix}</span>
+      <p className="font-geist text-[14px] mt-1 pl-4" style={{ color: isLight ? "#2d3748" : "var(--color-paper)" }}>
+        <span className="font-bold" style={{ color }}>{typeof value === "number" ? value.toLocaleString() : value}</span>
+        <span className="text-[12px] ml-1" style={{ color: isLight ? "#718096" : "rgba(255,255,255,0.6)" }}>{suffix}</span>
       </p>
     </div>
   )
@@ -70,26 +73,28 @@ function ChartCard({ title, children, delay = 0 }: { title: string; children: Re
 }
 
 function ChartDefs() {
+  const { blue, orange } = useBrandColors()
+  
   return (
     <defs>
-      {/* 인천대 블루 칩 그라데이션 */}
+      {/* 기본/액티브 블루 그라데이션 */}
       <linearGradient id="barGradientBlue" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stopColor="#004B9B" />
-        <stop offset="100%" stopColor="#38BDF8" />
+        <stop offset="0%" stopColor={blue[2]} />
+        <stop offset="100%" stopColor={blue[1]} />
       </linearGradient>
       <linearGradient id="barGradientBlueActive" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stopColor="#0056B3" />
-        <stop offset="100%" stopColor="#7DD3FC" />
+        <stop offset="0%" stopColor={blue[0]} />
+        <stop offset="100%" stopColor={blue[1]} />
       </linearGradient>
       
-      {/* 횃불이 오렌지 칩 그라데이션 */}
+      {/* 기본/액티브 오렌지 그라데이션 */}
       <linearGradient id="barGradientOrange" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stopColor="#C2410C" />
-        <stop offset="100%" stopColor="#FDBA74" />
+        <stop offset="0%" stopColor={orange[2]} />
+        <stop offset="100%" stopColor={orange[1]} />
       </linearGradient>
       <linearGradient id="barGradientOrangeActive" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stopColor="#EA580C" />
-        <stop offset="100%" stopColor="#FED7AA" />
+        <stop offset="0%" stopColor={orange[0]} />
+        <stop offset="100%" stopColor={orange[1]} />
       </linearGradient>
     </defs>
   )
@@ -103,10 +108,10 @@ export default function CourseTypeCharts({ byCourseTypeCount, byCourseTypeAvgEnr
           <BarChart data={byCourseTypeCount} margin={{ top: 10, right: 10, left: 0, bottom: 20 }} barSize={16}>
             <ChartDefs />
             <XAxis dataKey="name" axisLine={false} tickLine={false}
-              tick={{ fontSize: 11, fill: "rgba(255,255,255,0.6)", fontFamily: "var(--font-sans)" }} dy={10} />
+              tick={{ fontSize: 11, fill: "var(--color-mist)", fontFamily: "var(--font-sans)" }} dy={10} />
             <YAxis axisLine={false} tickLine={false}
-              tick={{ fontSize: 11, fill: "rgba(255,255,255,0.4)" }} dx={-8} />
-            <Tooltip content={<DarkTooltip suffix="개" />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
+              tick={{ fontSize: 11, fill: "var(--color-mist)" }} dx={-8} />
+            <Tooltip content={<DarkTooltip suffix="개" />} cursor={{ fill: "rgba(100,180,255,0.08)" }} />
             <Bar dataKey="value" shape={<GradientBar />} activeBar={<CustomActiveBar />} />
           </BarChart>
         </ResponsiveContainer>
@@ -117,10 +122,10 @@ export default function CourseTypeCharts({ byCourseTypeCount, byCourseTypeAvgEnr
           <BarChart data={byCourseTypeAvgEnroll} margin={{ top: 10, right: 10, left: 0, bottom: 20 }} barSize={16}>
             <ChartDefs />
             <XAxis dataKey="name" axisLine={false} tickLine={false}
-              tick={{ fontSize: 11, fill: "rgba(255,255,255,0.6)", fontFamily: "var(--font-sans)" }} dy={10} />
+              tick={{ fontSize: 11, fill: "var(--color-mist)", fontFamily: "var(--font-sans)" }} dy={10} />
             <YAxis axisLine={false} tickLine={false}
-              tick={{ fontSize: 11, fill: "rgba(255,255,255,0.4)" }} dx={-8} />
-            <Tooltip content={<DarkTooltip suffix="명" />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
+              tick={{ fontSize: 11, fill: "var(--color-mist)" }} dx={-8} />
+            <Tooltip content={<DarkTooltip suffix="명" />} cursor={{ fill: "rgba(100,180,255,0.08)" }} />
             <Bar dataKey="value" radius={[6,6,0,0]} activeBar={<CustomActiveBar />}>
               {byCourseTypeAvgEnroll.map((entry, index) => {
                 const isGenEd = entry.name.includes("교양")

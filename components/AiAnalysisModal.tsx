@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { X, Download, Sparkles, Loader2 } from "lucide-react"
 import ReactMarkdown from "react-markdown"
 import { motion, AnimatePresence } from "framer-motion"
+import { useBrandColors } from "@/hooks/useBrandColors"
 
 interface AiAnalysisModalProps {
   isOpen: boolean
@@ -21,6 +22,10 @@ export default function AiAnalysisModal({
   const [completion, setCompletion] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
+  const { orange, isLight } = useBrandColors()
+  
+  // 포인트 컬러: 횃불이 오렌지 (다크) -> 인천대 블루 (라이트)
+  const pointColor = orange[0]
 
   const fetchAnalysis = async () => {
     setIsLoading(true)
@@ -100,7 +105,7 @@ export default function AiAnalysisModal({
 
       {/* Modal Container */}
       <motion.div
-        className="relative w-full max-w-[640px] bg-[var(--color-char)]/95 backdrop-blur-[24px] rounded-[var(--radius-cards)] border border-[var(--color-bone)]/10 shadow-[0_24px_48px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] overflow-hidden flex flex-col max-h-[90vh]"
+        className={`relative w-full max-w-[640px] backdrop-blur-[24px] rounded-[var(--radius-cards)] shadow-[0_24px_48px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] overflow-hidden flex flex-col max-h-[90vh] ${isLight ? "bg-white/95 border border-black/10" : "bg-[var(--color-char)]/95 border border-[var(--color-bone)]/10"}`}
         initial={{ opacity: 0, scale: 0.95, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 8 }}
@@ -108,9 +113,9 @@ export default function AiAnalysisModal({
       >
         
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--color-bone)]/10 flex items-center justify-between shrink-0">
-          <h2 className="text-[15px] font-medium text-[var(--color-bone)] flex items-center gap-2.5">
-            <Sparkles className="w-5 h-5" style={{ color: "#F97316" }} />
+        <div className={`px-6 py-4 border-b flex items-center justify-between shrink-0 ${isLight ? "border-black/10" : "border-[var(--color-bone)]/10"}`}>
+          <h2 className="text-[15px] font-medium flex items-center gap-2.5" style={{ color: isLight ? "#1a202c" : "var(--color-bone)" }}>
+            <Sparkles className="w-5 h-5" style={{ color: pointColor }} />
             AI 강의 데이터 종합 분석
           </h2>
           <button
@@ -127,14 +132,14 @@ export default function AiAnalysisModal({
           {isGenerating && !completion ? (
             // 로딩 상태
             <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
-              <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "rgba(249,115,22,0.15)" }}>
-                <Loader2 className="w-7 h-7 animate-spin" style={{ color: "#F97316" }} />
+              <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: `${pointColor}22` }}>
+                <Loader2 className="w-7 h-7 animate-spin" style={{ color: pointColor }} />
               </div>
               <div>
-                <p className="text-[16px] font-medium text-[var(--color-bone)] mb-1">
+                <p className="text-[16px] font-medium mb-1" style={{ color: isLight ? "#2d3748" : "var(--color-bone)" }}>
                   Gemini 3.1 Flash-Lite 분석 중
                 </p>
-                <p className="text-[13px] text-[var(--color-smoke)]">
+                <p className="text-[13px]" style={{ color: isLight ? "#718096" : "var(--color-smoke)" }}>
                   대시보드 데이터를 종합적으로 해석하여 보고서를 작성하고 있습니다.
                 </p>
               </div>
@@ -172,17 +177,18 @@ export default function AiAnalysisModal({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-[var(--color-bone)]/10 shrink-0 flex justify-end gap-3">
+        <div className={`px-6 py-4 border-t flex items-center justify-end shrink-0 gap-3 ${isLight ? "bg-gray-50 border-black/10" : "bg-black/20 border-[var(--color-bone)]/10"}`}>
           <button
             onClick={onClose}
-            className="px-5 py-2.5 text-[13px] font-medium text-[var(--color-mist)] bg-[var(--color-iron)]/50 border border-[var(--color-bone)]/10 hover:bg-[var(--color-iron)] rounded-[var(--radius-buttons)] transition-colors"
+            className={`px-5 py-2.5 text-[13px] font-medium rounded-[var(--radius-buttons)] transition-colors ${isLight ? "text-gray-600 bg-white border border-gray-200 hover:bg-gray-100" : "text-[var(--color-mist)] bg-[var(--color-iron)]/50 border border-[var(--color-bone)]/10 hover:bg-[var(--color-iron)]"}`}
           >
             닫기
           </button>
           <button
             onClick={handleDownload}
             disabled={!completion || isLoading}
-            className="px-5 py-2.5 text-[13px] font-medium text-[var(--color-void)] bg-[var(--color-bone)] hover:opacity-90 rounded-[var(--radius-buttons)] transition-opacity disabled:opacity-40 disabled:pointer-events-none flex items-center gap-2"
+            className="px-5 py-2.5 text-[13px] font-medium text-white hover:opacity-90 rounded-[var(--radius-buttons)] transition-opacity disabled:opacity-40 disabled:pointer-events-none flex items-center gap-2"
+            style={{ backgroundColor: pointColor }}
           >
             <Download className="w-4 h-4" />
             보고서 다운로드 (.md)

@@ -2,6 +2,7 @@
 
 import { useDashboard } from "@/context/DashboardFilterContext"
 import { Sparkles } from "lucide-react"
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 interface PageHeaderProps {
   college?: string
@@ -40,15 +41,18 @@ export default function PageHeader({
         <p className="text-[14px] font-normal text-[var(--color-smoke)]">{subtitle}</p>
       </div>
 
-      {/* AI Analysis Button */}
-      <button
-        onClick={onAiAnalysis}
-        disabled={isLoading}
-        className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-[var(--radius-buttons)] bg-[var(--color-iron)]/60 backdrop-blur-md border border-[var(--color-bone)]/10 hover:bg-[var(--color-iron)] text-[var(--color-bone)] text-[14px] font-medium whitespace-nowrap self-start sm:self-start transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        <Sparkles className="w-4 h-4 text-[var(--color-indigo-haze)]" />
-        AI 강의 분석
-      </button>
+      {/* Actions */}
+      <div className="flex items-center gap-3 self-start sm:self-start">
+        <ThemeToggle />
+        <button
+          onClick={onAiAnalysis}
+          disabled={isLoading}
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-[var(--radius-buttons)] bg-[var(--color-iron)]/60 backdrop-blur-md border border-[var(--color-bone)]/10 hover:bg-[var(--color-iron)] text-[var(--color-bone)] text-[14px] font-medium whitespace-nowrap transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Sparkles className="w-4 h-4 text-[var(--color-indigo-haze)]" />
+          AI 강의 분석
+        </button>
+      </div>
     </div>
   )
 }

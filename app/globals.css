@@ -63,8 +63,43 @@
   /* Glassmorphism Surfaces */
   --glass-surface: rgba(255, 255, 255, 0.05);
   --glass-surface-elevated: rgba(255, 255, 255, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.15);
-  --glass-border-bright: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-strong: rgba(255, 255, 255, 0.2);
+  --glass-glow: rgba(255, 255, 255, 0.4);
+}
+
+.light {
+  /* Light Space Colors */
+  --color-void: #f8fafc;
+  --color-deep: #f1f5f9;
+  --color-char: #ffffff;
+  --color-iron: #e2e8f0;
+  --color-slate: #cbd5e1;
+  --color-smoke: #94a3b8;
+  --color-graphite: #ffffff;
+  --color-ink: #f8fafc;
+  --color-fog: #64748b;
+  --color-mist: #475569;
+  --color-ash: #334155;
+  --color-bone: #0f172a;
+  --color-paper: #000000;
+  --color-onyx: #ffffff;
+  --color-indigo-haze: #6b62f2;
+  --color-indigo-bright: #7c6fff;
+  --color-dawn-wash: #9cafb8;
+  --gradient-indigo-haze: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(107,98,242,0.4) 50%, rgba(0,0,0,0));
+  --gradient-dawn-wash: linear-gradient(180deg, rgb(72,103,175), rgb(156,175,184), rgb(196,149,119));
+
+  /* Glassmorphism Surfaces for Light Mode */
+  --glass-surface: rgba(255, 255, 255, 0.85);
+  --glass-surface-elevated: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-border-strong: rgba(0, 0, 0, 0.12);
+  --glass-glow: rgba(0, 0, 0, 0.1);
+}
+
+:root {
+  /* Glassmorphism Surfaces */
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   --glass-shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(100, 180, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 
@@ -110,7 +145,7 @@ body {
   background: var(--glass-surface-elevated);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid var(--glass-border-bright);
+  border: 1px solid var(--glass-border-strong);
   border-radius: var(--radius-cards);
   box-shadow: var(--glass-shadow-elevated);
 }

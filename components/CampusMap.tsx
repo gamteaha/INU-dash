@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useMemo } from "react"
 import { useDashboardFilter } from "@/context/DashboardFilterContext"
 import { mapCollegeName } from "@/lib/supabase/constants"
+import { useBrandColors } from "@/hooks/useBrandColors"
 
 declare global {
   interface Window { kakao: any }
@@ -31,8 +32,9 @@ export default function CampusMap() {
   const [mapInstance, setMapInstance] = useState<any>(null)
   const [mapTypeId, setMapTypeId] = useState<"ROADMAP" | "SKYVIEW">("SKYVIEW")
 
-  const { filteredCourses, setSelectedCollege } = useDashboardFilter()
+  const { filteredCourses, selectedCollege, setSelectedCollege } = useDashboardFilter()
   const [hoveredBuilding, setHoveredBuilding] = useState<string | null>(null)
+  const { blue, orange, isLight } = useBrandColors()
 
   const overlaysRef = useRef<any[]>([])
 
@@ -78,6 +80,16 @@ export default function CampusMap() {
       mapInstance.setMapTypeId(window.kakao.maps.MapTypeId[mapTypeId])
     }
   }, [mapInstance, mapTypeId])
+
+  // Pan to 사범대학 if selected
+  useEffect(() => {
+    if (!mapInstance || !window.kakao) return
+    if (selectedCollege === "사범대학") {
+      mapInstance.panTo(new window.kakao.maps.LatLng(37.3815880, 126.6542564))
+    } else {
+      mapInstance.panTo(new window.kakao.maps.LatLng(37.3745, 126.6327))
+    }
+  }, [mapInstance, selectedCollege])
 
   // Aggregate stats
   const buildingStats = useMemo(() => {
@@ -139,14 +151,20 @@ export default function CampusMap() {
       bubble.style.position = "relative"
       bubble.style.overflow = "visible"
 
-      // 글래스 버블 스타일 (지도일 땐 솔리드 블루, 위성일 땐 글래스)
+      // 글래스 버블 스타일 (지도일 땐 솔리드 컬러, 위성일 땐 글래스)
+      // 라이트 모드이면 기본색상을 주황, 아니면 파랑으로.
+      const solidColor = isLight ? orange[0] : "#1A6EBF"
+      const solidHoverColor = isLight ? orange[1] : "#5BC8F5"
+      const glassColor = isLight ? "rgba(249,115,22,0.22)" : "rgba(100,180,255,0.22)"
+      const glassHoverColor = isLight ? "rgba(249,115,22,0.35)" : "rgba(91,200,245,0.35)"
+
       bubble.style.background = isRoadmap
-        ? (isHovered ? "#5BC8F5" : "#1A6EBF")
-        : (isHovered ? "rgba(91,200,245,0.35)" : "rgba(100,180,255,0.22)")
+        ? (isHovered ? solidHoverColor : solidColor)
+        : (isHovered ? glassHoverColor : glassColor)
       bubble.style.backdropFilter = isRoadmap ? "none" : "blur(10px)"
       bubble.style.border = isHovered
-        ? "1.5px solid rgba(91,200,245,0.9)"
-        : (isRoadmap ? "1.5px solid #1A6EBF" : "1.5px solid rgba(168,216,240,0.6)")
+        ? `1.5px solid ${isLight ? orange[1] : "rgba(91,200,245,0.9)"}`
+        : (isRoadmap ? `1.5px solid ${solidColor}` : `1.5px solid ${isLight ? "rgba(249,115,22,0.6)" : "rgba(168,216,240,0.6)"}`)
       bubble.style.boxShadow = isHovered
         ? "0 0 20px rgba(91,200,245,0.5), inset 0 1px 0 rgba(255,255,255,0.4), 0 4px 20px rgba(91,200,245,0.3)"
         : "0 0 12px rgba(100,180,255,0.3), inset 0 1px 0 rgba(255,255,255,0.35), 0 2px 12px rgba(0,0,0,0.25)"
@@ -186,20 +204,20 @@ export default function CampusMap() {
 
       bubble.onmouseenter = () => {
         bubble.style.transform = "scale(1.18)"
-        bubble.style.background = isRoadmap ? "#5BC8F5" : "rgba(91,200,245,0.4)"
+        bubble.style.background = isRoadmap ? solidHoverColor : (isLight ? "rgba(249,115,22,0.4)" : "rgba(91,200,245,0.4)")
         bubble.style.boxShadow = isRoadmap 
-          ? "0 0 24px rgba(91,200,245,0.8)" 
-          : "0 0 24px rgba(91,200,245,0.6), inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 24px rgba(91,200,245,0.35)"
-        bubble.style.border = "1.5px solid rgba(91,200,245,0.95)"
+          ? `0 0 24px ${isLight ? "rgba(249,115,22,0.8)" : "rgba(91,200,245,0.8)"}` 
+          : `0 0 24px ${isLight ? "rgba(249,115,22,0.6)" : "rgba(91,200,245,0.6)"}, inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 24px ${isLight ? "rgba(249,115,22,0.35)" : "rgba(91,200,245,0.35)"}`
+        bubble.style.border = `1.5px solid ${isLight ? "rgba(249,115,22,0.95)" : "rgba(91,200,245,0.95)"}`
         setHoveredBuilding(building.college)
       }
       bubble.onmouseleave = () => {
         bubble.style.transform = "scale(1)"
-        bubble.style.background = isRoadmap ? "#1A6EBF" : "rgba(100,180,255,0.22)"
+        bubble.style.background = isRoadmap ? solidColor : glassColor
         bubble.style.boxShadow = isRoadmap
-          ? "0 4px 12px rgba(26,110,191,0.5)"
-          : "0 0 12px rgba(100,180,255,0.3), inset 0 1px 0 rgba(255,255,255,0.35), 0 2px 12px rgba(0,0,0,0.25)"
-        bubble.style.border = isRoadmap ? "1.5px solid #1A6EBF" : "1.5px solid rgba(168,216,240,0.6)"
+          ? `0 4px 12px ${isLight ? "rgba(249,115,22,0.5)" : "rgba(26,110,191,0.5)"}`
+          : `0 0 12px ${isLight ? "rgba(249,115,22,0.3)" : "rgba(100,180,255,0.3)"}, inset 0 1px 0 rgba(255,255,255,0.35), 0 2px 12px rgba(0,0,0,0.25)`
+        bubble.style.border = isRoadmap ? `1.5px solid ${solidColor}` : `1.5px solid ${isLight ? "rgba(249,115,22,0.6)" : "rgba(168,216,240,0.6)"}`
         setHoveredBuilding(null)
       }
       bubble.onclick = (e) => {
@@ -301,7 +319,7 @@ export default function CampusMap() {
 
       overlaysRef.current.push(overlay)
     })
-  }, [mapInstance, buildingStats, hoveredBuilding, maxCourseCount, setSelectedCollege, mapTypeId])
+  }, [mapInstance, buildingStats, hoveredBuilding, maxCourseCount, setSelectedCollege, mapTypeId, isLight, blue, orange])
 
   return (
     <div className="glass-card p-6 md:p-8 mb-8 flex flex-col gap-6 min-h-[520px] overflow-hidden relative">

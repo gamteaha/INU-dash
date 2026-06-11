@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react"
 import * as echarts from "echarts"
 import { motion } from "framer-motion"
+import { useBrandColors } from "@/hooks/useBrandColors"
 
 interface TimeChartsProps {
   dayData: { name: string; value: number }[]
@@ -13,13 +14,16 @@ function IsometricBarChart({
   data,
   title,
   delay = 0,
+  colors
 }: {
   data: { name: string; value: number }[]
   title: string
   delay?: number
+  colors: { blue: string[]; orange: string[]; isLight: boolean }
 }) {
   const chartRef = useRef<HTMLDivElement>(null)
   const instanceRef = useRef<echarts.ECharts | null>(null)
+  const { blue, orange, isLight } = colors
 
   useEffect(() => {
     if (!chartRef.current) return
@@ -55,16 +59,16 @@ function IsometricBarChart({
         formatter: (params: any) => {
           const p = params[0];
           const isMax = p.value === maxVal;
-          const borderColor = isMax ? 'rgba(249,115,22,0.4)' : 'rgba(56,189,248,0.35)';
-          const textColor = isMax ? '#F97316' : '#38BDF8';
+          const borderColor = isMax ? orange[0] : blue[0]
+          const textColor = isMax ? orange[1] : blue[1]
           
           return `
-            <div style="background:rgba(8,20,42,0.92); border: 1px solid ${borderColor}; border-radius:12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); padding: 10px 14px;">
+            <div style="background:${isLight ? 'rgba(255,255,255,0.95)' : 'rgba(8,20,42,0.92)'}; border: 1px solid ${borderColor}; border-radius:12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); padding: 10px 14px;">
               <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
                 <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${textColor};box-shadow:0 0 8px ${textColor}"></span>
-                <b style="color:rgba(255,255,255,0.85);font-size:13px;font-family:var(--font-sans)">${p.name}</b>
+                <b style="color:${isLight ? '#1a202c' : 'rgba(255,255,255,0.85)'};font-size:13px;font-family:var(--font-sans)">${p.name}</b>
               </div>
-              <span style="color:rgba(255,255,255,0.7);font-size:12px">강좌 수:</span> 
+              <span style="color:${isLight ? '#718096' : 'rgba(255,255,255,0.7)'};font-size:12px">강좌 수:</span> 
               <span style="color:${textColor};font-weight:700;font-size:14px;margin-left:4px;font-family:var(--font-geist)">${Number(p.value).toLocaleString()}개</span>
             </div>
           `
@@ -73,18 +77,18 @@ function IsometricBarChart({
       xAxis: {
         type: 'category',
         data: data.map(d => d.name),
-        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.15)' } },
+        axisLine: { lineStyle: { color: isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.15)' } },
         axisTick: { show: false },
-        axisLabel: { color: 'rgba(255,255,255,0.8)', fontSize: 12, margin: 12, fontFamily: 'var(--font-sans, sans-serif)' },
+        axisLabel: { color: isLight ? '#4a5568' : 'rgba(255,255,255,0.8)', fontSize: 12, margin: 12, fontFamily: 'var(--font-sans, sans-serif)' },
       },
       yAxis: {
         type: 'value',
         name: '강좌 수',
-        nameTextStyle: { color: 'rgba(255,255,255,0.5)', fontSize: 11, align: 'right', padding: [0, 8, 0, 0] },
-        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.06)', type: 'dashed' } },
+        nameTextStyle: { color: isLight ? '#718096' : 'rgba(255,255,255,0.5)', fontSize: 11, align: 'right', padding: [0, 8, 0, 0] },
+        splitLine: { lineStyle: { color: isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)', type: 'dashed' } },
         axisLine: { show: false },
         axisTick: { show: false },
-        axisLabel: { color: 'rgba(255,255,255,0.45)', fontSize: 11, margin: 12 },
+        axisLabel: { color: isLight ? '#a0aec0' : 'rgba(255,255,255,0.45)', fontSize: 11, margin: 12 },
       },
       series: [{
         type: 'custom',
@@ -111,21 +115,23 @@ function IsometricBarChart({
           
           const cx = x - offsetX / 2;
 
-          // 색상 분기 (Dual Color System)
-          const topColor = isMax 
-            ? new echarts.graphic.LinearGradient(0, 0, 1, 1, [{ offset: 0, color: '#FED7AA' }, { offset: 1, color: '#FDBA74' }])
-            : new echarts.graphic.LinearGradient(0, 0, 1, 1, [{ offset: 0, color: '#BAE6FD' }, { offset: 1, color: '#38BDF8' }]);
+          // 색상 분기 (Dual Color System, Light Mode 대응)
+          const baseColor = isMax ? orange : blue;
           
-          const frontColor = isMax
-            ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#FDBA74' }, { offset: 1, color: '#F97316' }])
-            : new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#38BDF8' }, { offset: 1, color: '#004B9B' }]);
+          const topColor = new echarts.graphic.LinearGradient(0, 0, 1, 1, [
+            { offset: 0, color: baseColor[1] }, { offset: 1, color: baseColor[1] }
+          ]);
           
-          const sideColor = isMax
-            ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#EA580C' }, { offset: 1, color: '#C2410C' }])
-            : new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#0284C7' }, { offset: 1, color: '#003366' }]);
+          const frontColor = new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: baseColor[1] }, { offset: 1, color: baseColor[0] }
+          ]);
+          
+          const sideColor = new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: baseColor[0] }, { offset: 1, color: baseColor[2] }
+          ]);
 
-          const glowColor = isMax ? 'rgba(249, 115, 22, 0.5)' : 'rgba(56, 189, 248, 0.5)';
-          const sideGlowColor = isMax ? 'rgba(249, 115, 22, 0.25)' : 'rgba(56, 189, 248, 0.25)';
+          const glowColor = `${baseColor[0]}80`; // 50% opacity
+          const sideGlowColor = `${baseColor[0]}40`; // 25% opacity
 
           const pFL = [cx - width / 2, currentY];
           const pFR = [cx + width / 2, currentY];
@@ -207,10 +213,12 @@ function IsometricBarChart({
 }
 
 export default function TimeCharts({ dayData, timeSlotData }: TimeChartsProps) {
+  const brandColors = useBrandColors()
+  
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-      <IsometricBarChart data={dayData} title="요일별 수업 강좌 수" delay={550} />
-      <IsometricBarChart data={timeSlotData} title="수업 시간대별 강좌 수" delay={650} />
+      <IsometricBarChart data={dayData} title="요일별 수업 강좌 수" delay={550} colors={brandColors} />
+      <IsometricBarChart data={timeSlotData} title="수업 시간대별 강좌 수" delay={650} colors={brandColors} />
     </div>
   )
 }
