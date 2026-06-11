@@ -30,25 +30,57 @@ function Pie3DChart({
     const chart = echarts.init(chartRef.current, undefined, { renderer: "canvas" })
     instanceRef.current = chart
 
+    const maxVal = Math.max(...data.map(d => d.value)) || 1
+
+    // 데이터에 isMax 등 추가 정보 매핑
+    const mappedData = data.map((d, i) => {
+      const isMax = d.value === maxVal && maxVal > 0
+      return {
+        name: d.name,
+        value: d.value,
+        isMax,
+        itemStyle: {
+          color: isMax
+            ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: '#FDBA74' }, // 포인트 오렌지 하이라이트
+                { offset: 1, color: '#C2410C' },
+              ])
+            : new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: PALETTE[i % PALETTE.length] },
+                { offset: 1, color: PALETTE[(i + 1) % PALETTE.length] + "bb" },
+              ]),
+        },
+        originalColor: PALETTE[i % PALETTE.length]
+      }
+    })
+
     const option: echarts.EChartsOption = {
       backgroundColor: "transparent",
       tooltip: {
         trigger: "item",
-        backgroundColor: "rgba(8,20,42,0.92)",
-        borderColor: "rgba(100,180,255,0.35)",
-        borderWidth: 1,
-        textStyle: { color: "rgba(255,255,255,0.85)", fontSize: 13 },
+        backgroundColor: "transparent",
+        borderColor: "transparent",
+        borderWidth: 0,
+        padding: 0,
         formatter: (params: any) => {
+          const isMax = params.data.isMax;
           const pct = ((params.value / total) * 100).toFixed(1)
+          
+          const dotColor = isMax ? '#F97316' : params.data.originalColor;
+          const borderColor = isMax ? 'rgba(249,115,22,0.4)' : 'rgba(100,180,255,0.35)';
+          const textColor = isMax ? '#F97316' : '#A8D8F0';
+
           return `
-            <div style="font-size:13px; padding:2px 0">
-              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${params.color};margin-right:6px"></span>
-              <b>${params.name}</b><br/>
-              <span style="color:#A8D8F0;margin-left:14px">${Number(params.value).toLocaleString()}개 · ${pct}%</span>
+            <div style="font-size:13px; border: 1px solid ${borderColor}; border-radius:12px; background:rgba(8,20,42,0.92); box-shadow: 0 8px 32px rgba(0,0,0,0.5); padding: 10px 14px;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+                <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${dotColor};box-shadow:0 0 8px ${dotColor}"></span>
+                <b style="color:rgba(255,255,255,0.85);font-size:13px;font-family:var(--font-sans)">${params.name}</b>
+              </div>
+              <span style="color:rgba(255,255,255,0.7);font-size:12px;margin-left:14px">비중:</span>
+              <span style="color:${textColor};font-weight:700;font-size:14px;margin-left:4px;font-family:var(--font-geist)">${Number(params.value).toLocaleString()}개 · ${pct}%</span>
             </div>
           `
         },
-        extraCssText: "border-radius:12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);",
       },
       graphic: [
         {
@@ -90,19 +122,9 @@ function Pie3DChart({
             scale: true,
             scaleSize: 6,
           },
-          data: data.map((d, i) => ({
-            name: d.name,
-            value: d.value,
-            itemStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: PALETTE[i % PALETTE.length] },
-                { offset: 1, color: PALETTE[(i + 1) % PALETTE.length] + "bb" },
-              ]),
-            },
-          })),
+          data: mappedData,
         },
       ],
-      // 3D 기울기 효과 - CSS perspective 사용
     }
 
     chart.setOption(option)
@@ -150,8 +172,10 @@ function Pie3DChart({
       {/* 커스텀 범례 */}
       <div className="mt-3 px-1 space-y-1.5">
         {data.map((entry, index) => {
+          const isMax = entry.value === Math.max(...data.map(d => d.value)) && entry.value > 0;
           const pct = total > 0 ? ((entry.value / total) * 100).toFixed(1) : "0.0"
-          const color = PALETTE[index % PALETTE.length]
+          const color = isMax ? "#F97316" : PALETTE[index % PALETTE.length]
+          
           return (
             <div
               key={index}
@@ -179,7 +203,7 @@ function Pie3DChart({
               <span style={{ flexShrink: 0, color: "rgba(255,255,255,0.5)", fontSize: "11px" }}>
                 {Number(entry.value).toLocaleString()}개
               </span>
-              <span style={{ flexShrink: 0, color: "#64B4FF", fontSize: "11px", minWidth: "40px", textAlign: "right" }}>
+              <span style={{ flexShrink: 0, color: isMax ? "#FDBA74" : "#64B4FF", fontSize: "11px", minWidth: "40px", textAlign: "right" }}>
                 {pct}%
               </span>
             </div>

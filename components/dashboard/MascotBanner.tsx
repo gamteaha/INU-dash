@@ -73,14 +73,17 @@ export default function MascotBanner() {
 
         {/* Left Column: Headline & Features */}
         <div className="lg:col-span-5 flex flex-col gap-6">
-          <div className="flex flex-col gap-3">
-            <span className="text-[13px] font-medium tracking-widest uppercase" style={{ color: "#64B4FF" }}>
-              Incheon National University
+          <div className="flex flex-col gap-2">
+            <span 
+              className="text-[72px] font-normal tracking-[-0.035em] leading-[1.0] text-white font-geist block mb-1" 
+              style={{ fontFeatureSettings: '"ss01" on, "cv11" on' }}
+            >
+              Course Intelligence.
             </span>
-            <h1 className="text-[48px] md:text-[56px] font-normal leading-[1.1] tracking-tight text-[var(--color-paper)] text-balance">
+            <h1 className="text-[40px] font-medium tracking-[-0.02em] leading-[1.2] text-white text-balance font-geist">
               {getHeadline()}
             </h1>
-            <p className="text-[16px] text-[var(--color-mist)]">{getSubtitle()}</p>
+            <p className="text-[16px] text-[var(--color-mist)] mt-1">{getSubtitle()}</p>
           </div>
 
           {/* Feature List */}

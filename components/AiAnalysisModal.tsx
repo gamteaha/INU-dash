@@ -100,7 +100,7 @@ export default function AiAnalysisModal({
         {/* Header */}
         <div className="px-6 py-4 border-b border-[var(--color-bone)]/10 flex items-center justify-between shrink-0">
           <h2 className="text-[15px] font-medium text-[var(--color-bone)] flex items-center gap-2.5">
-            <Sparkles className="w-5 h-5 text-[var(--color-indigo-haze)]" />
+            <Sparkles className="w-5 h-5" style={{ color: "#F97316" }} />
             AI 강의 데이터 종합 분석
           </h2>
           <button
@@ -117,8 +117,8 @@ export default function AiAnalysisModal({
           {isGenerating && !completion ? (
             // 로딩 상태
             <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-[var(--color-iron)]/50 flex items-center justify-center">
-                <Loader2 className="w-7 h-7 text-[var(--color-indigo-haze)] animate-spin" />
+              <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "rgba(249,115,22,0.15)" }}>
+                <Loader2 className="w-7 h-7 animate-spin" style={{ color: "#F97316" }} />
               </div>
               <div>
                 <p className="text-[16px] font-medium text-[var(--color-bone)] mb-1">
@@ -152,7 +152,7 @@ export default function AiAnalysisModal({
                 prose-h1:text-xl prose-h2:text-lg prose-h3:text-base
                 prose-p:text-[var(--color-mist)] prose-p:leading-relaxed
                 prose-li:text-[var(--color-mist)]
-                prose-strong:text-[var(--color-bone)]
+                prose-strong:text-[#FDBA74]
                 prose-code:text-[var(--color-indigo-haze)] prose-code:bg-[var(--color-iron)]/50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-[13px]
                 prose-hr:border-[var(--color-bone)]/10">
                 <ReactMarkdown>{completion}</ReactMarkdown>
