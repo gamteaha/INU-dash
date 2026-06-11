@@ -31,7 +31,7 @@ export default function CampusMap() {
   const [mapInstance, setMapInstance] = useState<any>(null)
   const [mapTypeId, setMapTypeId] = useState<"ROADMAP" | "SKYVIEW">("SKYVIEW")
 
-  const { allCourses, setSelectedCollege } = useDashboardFilter()
+  const { filteredCourses, setSelectedCollege } = useDashboardFilter()
   const [hoveredBuilding, setHoveredBuilding] = useState<string | null>(null)
 
   const overlaysRef = useRef<any[]>([])
@@ -83,7 +83,7 @@ export default function CampusMap() {
   const buildingStats = useMemo(() => {
     const stats: Record<string, { count: number; totalCapacity: number; totalEnrolled: number }> = {}
     buildings.forEach((b) => { stats[b.college] = { count: 0, totalCapacity: 0, totalEnrolled: 0 } })
-    allCourses.forEach((course) => {
+    filteredCourses.forEach((course) => {
       const col = mapCollegeName(course["대학(원)"])
       if (col && stats[col]) {
         stats[col].count++
@@ -92,7 +92,7 @@ export default function CampusMap() {
       }
     })
     return stats
-  }, [allCourses])
+  }, [filteredCourses])
 
   const maxCourseCount = Math.max(...Object.values(buildingStats).map((s) => s.count)) || 1
   const minSize = 46
@@ -109,9 +109,12 @@ export default function CampusMap() {
     buildings.forEach((building) => {
       const stats = buildingStats[building.college]
       const courseCount = stats.count
-      const avgEnrolled = courseCount > 0 ? Math.round(stats.totalEnrolled / courseCount) : 0
-      const size = courseCount === 0 ? minSize : minSize + (courseCount / maxCourseCount) * (maxSize - minSize)
+      if (courseCount === 0) return
+
+      const avgEnrolled = Math.round(stats.totalEnrolled / courseCount)
+      const size = minSize + (courseCount / maxCourseCount) * (maxSize - minSize)
       const isHovered = hoveredBuilding === building.college
+      const isRoadmap = mapTypeId === "ROADMAP"
 
       const content = document.createElement("div")
       content.style.position = "relative"
@@ -136,23 +139,23 @@ export default function CampusMap() {
       bubble.style.position = "relative"
       bubble.style.overflow = "visible"
 
-      // 글래스 버블 스타일
-      bubble.style.background = isHovered
-        ? "rgba(91,200,245,0.35)"
-        : "rgba(100,180,255,0.22)"
-      bubble.style.backdropFilter = "blur(10px)"
+      // 글래스 버블 스타일 (지도일 땐 솔리드 블루, 위성일 땐 글래스)
+      bubble.style.background = isRoadmap
+        ? (isHovered ? "#5BC8F5" : "#1A6EBF")
+        : (isHovered ? "rgba(91,200,245,0.35)" : "rgba(100,180,255,0.22)")
+      bubble.style.backdropFilter = isRoadmap ? "none" : "blur(10px)"
       bubble.style.border = isHovered
         ? "1.5px solid rgba(91,200,245,0.9)"
-        : "1.5px solid rgba(168,216,240,0.6)"
+        : (isRoadmap ? "1.5px solid #1A6EBF" : "1.5px solid rgba(168,216,240,0.6)")
       bubble.style.boxShadow = isHovered
         ? "0 0 20px rgba(91,200,245,0.5), inset 0 1px 0 rgba(255,255,255,0.4), 0 4px 20px rgba(91,200,245,0.3)"
         : "0 0 12px rgba(100,180,255,0.3), inset 0 1px 0 rgba(255,255,255,0.35), 0 2px 12px rgba(0,0,0,0.25)"
 
-      // 버블 내부 하이라이트 (광택 효과)
+      // 버블 내부 하이라이트 (광택 효과 - 지도 모드일 땐 더 밝게)
       const highlight = document.createElement("div")
       highlight.style.cssText = `
         position: absolute; top: 12%; left: 20%; width: 38%; height: 28%;
-        background: radial-gradient(ellipse, rgba(255,255,255,0.55) 0%, transparent 80%);
+        background: radial-gradient(ellipse, ${isRoadmap ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.55)"} 0%, transparent 80%);
         border-radius: 50%; pointer-events: none;
       `
       bubble.appendChild(highlight)
@@ -183,16 +186,20 @@ export default function CampusMap() {
 
       bubble.onmouseenter = () => {
         bubble.style.transform = "scale(1.18)"
-        bubble.style.background = "rgba(91,200,245,0.4)"
-        bubble.style.boxShadow = "0 0 24px rgba(91,200,245,0.6), inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 24px rgba(91,200,245,0.35)"
+        bubble.style.background = isRoadmap ? "#5BC8F5" : "rgba(91,200,245,0.4)"
+        bubble.style.boxShadow = isRoadmap 
+          ? "0 0 24px rgba(91,200,245,0.8)" 
+          : "0 0 24px rgba(91,200,245,0.6), inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 24px rgba(91,200,245,0.35)"
         bubble.style.border = "1.5px solid rgba(91,200,245,0.95)"
         setHoveredBuilding(building.college)
       }
       bubble.onmouseleave = () => {
         bubble.style.transform = "scale(1)"
-        bubble.style.background = "rgba(100,180,255,0.22)"
-        bubble.style.boxShadow = "0 0 12px rgba(100,180,255,0.3), inset 0 1px 0 rgba(255,255,255,0.35), 0 2px 12px rgba(0,0,0,0.25)"
-        bubble.style.border = "1.5px solid rgba(168,216,240,0.6)"
+        bubble.style.background = isRoadmap ? "#1A6EBF" : "rgba(100,180,255,0.22)"
+        bubble.style.boxShadow = isRoadmap
+          ? "0 4px 12px rgba(26,110,191,0.5)"
+          : "0 0 12px rgba(100,180,255,0.3), inset 0 1px 0 rgba(255,255,255,0.35), 0 2px 12px rgba(0,0,0,0.25)"
+        bubble.style.border = isRoadmap ? "1.5px solid #1A6EBF" : "1.5px solid rgba(168,216,240,0.6)"
         setHoveredBuilding(null)
       }
       bubble.onclick = (e) => {
@@ -274,8 +281,8 @@ export default function CampusMap() {
         margin-top: 5px;
         font-size: 10px;
         font-weight: 600;
-        color: ${isHovered ? "#A8D8F0" : "rgba(200,232,255,0.8)"};
-        text-shadow: 0 1px 4px rgba(0,20,60,0.8), 0 0 8px rgba(0,0,0,0.6);
+        color: ${isRoadmap ? (isHovered ? "#1A6EBF" : "#004B9B") : (isHovered ? "#A8D8F0" : "rgba(200,232,255,0.8)")};
+        text-shadow: ${isRoadmap ? "0 1px 2px rgba(255,255,255,0.8)" : "0 1px 4px rgba(0,20,60,0.8), 0 0 8px rgba(0,0,0,0.6)"};
         white-space: nowrap;
         letter-spacing: 0.02em;
         pointer-events: none;
@@ -294,7 +301,7 @@ export default function CampusMap() {
 
       overlaysRef.current.push(overlay)
     })
-  }, [mapInstance, buildingStats, hoveredBuilding, maxCourseCount, setSelectedCollege])
+  }, [mapInstance, buildingStats, hoveredBuilding, maxCourseCount, setSelectedCollege, mapTypeId])
 
   return (
     <div className="glass-card p-6 md:p-8 mb-8 flex flex-col gap-6 min-h-[520px] overflow-hidden relative">
