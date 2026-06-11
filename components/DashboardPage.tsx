@@ -317,6 +317,9 @@ export default function DashboardPage() {
             englishLecturesCount={aggregated.englishLecturesCount}
           />
 
+          {/* 캠퍼스 강좌 분포 지도 */}
+          <CampusMap />
+
           {/* 이수구분별 강좌 수 + 평균 수강인원 */}
           <CourseTypeCharts
             byCourseTypeCount={aggregated.byCourseTypeCount}
@@ -340,9 +343,6 @@ export default function DashboardPage() {
           {!selectedDepartment && (
             <CollegeSummaryTable data={aggregated.collegeSummary} />
           )}
-
-          {/* 캠퍼스 강좌 분포 지도 */}
-          <CampusMap />
 
           {/* 상세 강좌 정보 테이블 */}
           <CourseDetailTable courses={filteredCourses} />
