@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useMemo } from "react"
 import { useDashboardFilter } from "@/context/DashboardFilterContext"
+import { COLLEGE_HIERARCHY } from "@/lib/supabase/constants"
 import { X } from "lucide-react"
 import { createRoot } from "react-dom/client"
 
@@ -103,10 +104,13 @@ export default function CampusMap() {
 
     allCourses.forEach((course) => {
       const col = course["대학(원)"]
-      if (col && stats[col]) {
-        stats[col].count++
-        stats[col].totalCapacity += Number(course.정원) || 0
-        stats[col].totalEnrolled += Number(course.수강) || 0
+      const hierarchy = COLLEGE_HIERARCHY.find(h => h.dbColleges.includes(col))
+      const mainCollege = hierarchy ? hierarchy.college : col
+
+      if (mainCollege && stats[mainCollege]) {
+        stats[mainCollege].count++
+        stats[mainCollege].totalCapacity += Number(course.정원) || 0
+        stats[mainCollege].totalEnrolled += Number(course.수강) || 0
       }
     })
     return stats
