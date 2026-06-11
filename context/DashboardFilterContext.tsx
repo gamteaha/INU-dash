@@ -106,11 +106,11 @@ export function DashboardFilterProvider({ children }: { children: ReactNode }) {
 
         // Apply filters on database query level
         if (selectedDepartment) {
-          query = query.eq("학과(부)", selectedDepartment)
+          query = query.eq('"학과(부)"', selectedDepartment)
         } else if (selectedCollege) {
           const config = COLLEGE_HIERARCHY.find((h) => h.college === selectedCollege)
           if (config) {
-            query = query.in("대학(원)", config.dbColleges)
+            query = query.in('"대학(원)"', config.dbColleges)
           }
         }
 
